@@ -1,0 +1,33 @@
+[tool.ruff]
+# target-version = "py312"
+extend-include = ["*.ipynb"]
+line-length = 192
+lint.select = ["ALL"]
+lint.ignore = [
+    "ERA001", # commented-out-code.
+    "FA",     # ignore import future declaration
+    "F401",   # unused-import
+    "ANN201", # return types enforcing
+    "ANN202", # return types enforcing for private functions
+    "ANN204", # missing return type special-method
+    "ANN101", # this types enforcing
+    "T201",   # allow prints
+    "D203",   # ignore no-blank-line-before-class
+    "FIX002", # line-contains-todo
+    "TD002",  # missing-todo-author
+    "TD003",  # missing-todo-link
+    "D100",   # ignore missing docs
+    "D101",   # ^
+    "D102",   # ^
+    "D103",   # ^
+    "D104",   # ^
+    "D105",   # ^
+    "D106",   # ^
+    "D107",   # ^
+    "D200",   # ignore docs rules
+    "D205",   # ^
+    "D212",   # ^
+    "D400",   # ^
+    "D401",   # ^
+    "D415",   # ^
+]

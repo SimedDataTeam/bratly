@@ -1,5 +1,5 @@
 build:
-  image: docker-simed.hcuge.ch/simed/tooling/ci-images/uv:latest
+  image: ./bratly/dockerfiles/ci-images/uv:latest
 
   only:
     - tags
