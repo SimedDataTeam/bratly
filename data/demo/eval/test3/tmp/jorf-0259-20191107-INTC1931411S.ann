@@ -1,0 +1,187 @@
+T1	Lieu 571 583	Gouvernement
+T2	Divers 874 885	Vu l'arrêté
+T3	Divers 1001 1012	Vu l'arrêté
+T4	Organisation 1081 1095	Office central
+T5	Divers 1151 1159	Décide :
+T6	Personne 1196 1198	M.
+T7	Divers 1199 1207	Philippe
+T8	Lieu 1456 1462	France
+T9	Lieu 1792 1798	France
+T10	Personne 1804 1812	Frédéric
+T11	Personne 1951 1966	Mme Anne-Sophie
+T12	Personne 2027 2033	Fabien
+T13	Personne 2125 2137	Mme Patricia
+T14	Organisation 2189 2193	Etat
+T15	Personne 2249 2270	Mme Christine DEMARLE
+T16	Lieu 2372 2375	II.
+T17	Lieu 2674 2680	France
+T18	Personne 2686 2692	Thomas
+T19	Personne 2794 2805	Mme Corinne
+T20	Personne 2927 2936	Guillaume
+T21	Personne 3086 3092	Pascal
+T22	Lieu 3440 3446	France
+T23	Personne 3452 3460	Frédéric
+T24	Personne 3533 3543	M. Olivier
+T25	Personne 3641 3650	Alexandre
+T26	Lieu 3741 3744	IV.
+T27	Lieu 4037 4043	France
+T28	Personne 4046 4059	Mme Catherine
+T29	Personne 4148 4163	Nicolas GUIDOUX
+T30	Personne 4258 4274	Mme Sabine MELIN
+T31	Organisation 4309 4313	Etat
+T32	Personne 4369 4386	Mme Hélène HALTER
+T33	Lieu 4431 4435	Etat
+T34	Personne 4482 4492	Mme Malika
+T35	Lieu 4539 4543	Etat
+T36	Lieu 4912 4918	France
+T37	Personne 4941 4952	Jean-Michel
+T38	Personne 5052 5071	Mme Christine DUFAU
+T39	Lieu 5406 5412	France
+T40	Personne 5416 5426	Mme Carole
+T41	Personne 5560 5573	Mme Elisabeth
+T42	Lieu 5627 5631	Etat
+T43	Personne 5692 5700	Stéphane
+T44	Personne 5811 5822	Mme Pamella
+T45	Lieu 5863 5867	Etat
+T46	Personne 5938 5958	Mme Constance DEVRUE
+T47	Lieu 5991 5995	Etat
+T48	Personne 6066 6076	M. Michaël
+T49	Personne 6541 6560	Mme Jocelyne COLLIN
+T50	Personne 6769 6781	Mme Béatrice
+T51	Lieu 7004 7007	VI.
+T52	Personne 7255 7267	Jean-Jacques
+T53	Personne 7359 7365	Franck
+T54	Personne 7468 7480	Mme Nathalie
+T55	Organisation 7531 7535	Etat
+T56	Personne 7864 7879	Philippe MENARD
+T57	Personne 7951 7961	Eric BEROT
+T58	Personne 8096 8117	Mme Sandrine DESLIARD
+T59	Personne 8258 8269	Mme Martine
+T60	Lieu 8379 8384	VIII.
+T61	Personne 8685 8696	Mme Estelle
+T62	Personne 8842 8857	Bernard MANZONI
+T63	Personne 9045 9065	Mme Sandrine PERENON
+T64	Lieu 9320 9328	Bordeaux
+T65	Personne 9530 9544	François BODIN
+T66	Lieu 9618 9626	Bordeaux
+T67	Personne 9663 9678	Patrick LEONARD
+T68	Lieu 9766 9774	Bordeaux
+T69	Personne 9777 9794	Mme Marie-Josèphe
+T70	Organisation 9844 9848	Etat
+T71	Lieu 9943 9951	Bordeaux
+T72	Personne 9954 9961	M. José
+T73	Lieu 10051 10059	Toulouse
+T74	Personne 10065 10078	Jean-Luc SAUX
+T75	Lieu 10165 10173	Toulouse
+T76	Personne 10176 10185	Mme Tania
+T77	Organisation 10237 10241	Etat
+T78	Lieu 10322 10330	Toulouse
+T79	Divers 10341 10345	4 A
+T80	Lieu 10401 10406	Dijon
+T81	Personne 10605 10615	Mme Magali
+T82	Lieu 10717 10722	Dijon
+T83	Personne 10756 10766	M. Olivier
+T84	Lieu 10855 10860	Dijon
+T85	Lieu 10931 10936	Lille
+T86	Personne 11138 11152	Romuald MULLER
+T87	Lieu 11226 11231	Lille
+T88	Personne 11268 11286	Guillaume GALLOUIN
+T89	Lieu 11374 11379	Lille
+T90	Personne 11382 11394	Mme Béatrice
+T91	Organisation 11434 11438	Etat
+T92	Lieu 11533 11538	Lille
+T93	Divers 11549 11553	6 A
+T94	Lieu 11609 11613	Lyon
+T95	Personne 11815 11832	Christophe ALLAIN
+T96	Lieu 11905 11909	Lyon
+T97	Personne 11943 11955	Mme Nathalie
+T98	Lieu 12053 12057	Lyon
+T99	Personne 12063 12073	Alain BARD
+T100	Organisation 12115 12119	Etat
+T101	Lieu 12214 12218	Lyon
+T102	Personne 12224 12231	Fabrice
+T103	Lieu 12322 12338	Clermont-Ferrand
+T104	Personne 12344 12359	Fabrice KOZDEBA
+T105	Lieu 12446 12462	Clermont-Ferrand
+T106	Lieu 12533 12542	Marseille
+T107	Personne 12744 12755	Eric ARELLA
+T108	Lieu 12828 12837	Marseille
+T109	Personne 12874 12889	Philippe FRIZON
+T110	Lieu 12977 12986	Marseille
+T111	Personne 12989 12999	Mme Muriel
+T112	Lieu 13114 13123	Marseille
+T113	Personne 13129 13142	Jean-Philippe
+T114	Lieu 13235 13246	Montpellier
+T115	Organisation 13255 13262	FREITAS
+T116	Organisation 13263 13276	MEIRA Anthony
+T117	Lieu 13367 13378	Montpellier
+T118	Lieu 13467 13471	Nice
+T119	Divers 13482 13486	8 A
+T120	Lieu 13541 13548	Orléans
+T121	Personne 13750 13754	Eric
+T122	Lieu 13842 13849	Orléans
+T123	Personne 13886 13907	Jean-Philippe ALBAREL
+T124	Lieu 13994 14001	Orléans
+T125	Personne 14007 14017	Christophe
+T126	Organisation 14059 14063	Etat
+T127	Lieu 14157 14164	Orléans
+T128	Personne 14170 14185	Maurice ALIBERT
+T129	Lieu 14268 14275	Limoges
+T130	Personne 14278 14297	Mme Alexia DUDOGNON
+T131	Lieu 14384 14391	Limoges
+T132	Divers 14402 14406	9 A
+T133	Lieu 14462 14476	Pointe-à-Pitre
+T134	Personne 14678 14696	Christian NUSSBAUM
+T135	Lieu 14784 14798	Pointe-à-Pitre
+T136	Personne 14835 14845	Benoît NAU
+T137	Lieu 14979 14993	Fort-de-France
+T138	Personne 14999 15016	Alexandre LIHOLAT
+T139	Lieu 15082 15092	Martinique
+T140	Personne 15098 15113	Philippe JOMIER
+T141	Lieu 15195 15201	Guyane
+T142	Divers 15212 15217	10 A
+T143	Lieu 15273 15279	Rennes
+T144	Personne 15481 15494	Gilles SOULIE
+T145	Lieu 15567 15573	Rennes
+T146	Personne 15607 15609	M.
+T147	Personne 15618 15624	Pascal
+T148	Lieu 15712 15718	Rennes
+T149	Personne 15724 15740	Guillaume BLAVEC
+T150	Organisation 15782 15786	Etat
+T151	Lieu 15881 15887	Rennes
+T152	Personne 15890 15899	M. Jérôme
+T153	Lieu 15989 15994	Rouen
+T154	Personne 16000 16007	Jérémie
+T155	Lieu 16101 16106	Rouen
+T156	Personne 16109 16118	M. Lucien
+T157	Lieu 16207 16213	Angers
+T158	Personne 16219 16233	Léonard FAUVET
+T159	Lieu 16319 16325	Angers
+T160	Divers 16336 16341	11 A
+T161	Lieu 16397 16407	Strasbourg
+T162	Personne 16606 16618	Mme Béatrice
+T163	Lieu 16696 16706	Strasbourg
+T164	Personne 16712 16728	Thierry DE MARIA
+T165	Lieu 16816 16826	Strasbourg
+T166	Personne 16832 16841	Guillaume
+T167	Lieu 16941 16946	Nancy
+T168	Personne 16952 16963	Jean-Michel
+T169	Lieu 17055 17060	Reims
+T170	Personne 17066 17073	Antoine
+T171	Lieu 17168 17173	Reims
+T172	Divers 17184 17189	12 A
+T173	Divers 17239 17258	Ajaccio, délégation
+T174	Personne 17447 17461	Christian SIVY
+T175	Lieu 17535 17542	Ajaccio
+T176	Personne 17545 17555	Mme Sophie
+T177	Lieu 17644 17651	Ajaccio
+T178	Divers 17662 17667	13 A
+T179	Lieu 17718 17728	Versailles
+T180	Personne 17930 17937	Richard
+T181	Lieu 18027 18037	Versailles
+T182	Personne 18040 18062	Mme Sophie BEAUVILLAIN
+T183	Organisation 18095 18099	Etat
+T184	Lieu 18189 18199	Versailles
+T185	Divers 18385 18407	Journal officiel de la
+T186	Lieu 18408 18428	République française
+T187	Personne 18457 18466	J. Bonet 
