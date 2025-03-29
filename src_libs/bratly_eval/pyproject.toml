@@ -1,8 +1,8 @@
 [project]
 name = "bratly-eval"
-version = "0.1.0"
+version = "0.1.2"
 description = "Add your description here"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
     "bratly",
     "bratly-io-fs",
@@ -19,3 +19,6 @@ build-backend = "hatchling.build"
 [tool.uv.sources]
 bratly = { workspace = true }
 bratly-io-fs = { workspace = true }
+
+[tool.hatch.metadata]
+allow-direct-references = true

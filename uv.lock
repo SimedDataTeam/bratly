@@ -133,7 +133,24 @@ requires-dist = [
 [[package]]
 name = "bratly-ws"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
+
+[package.optional-dependencies]
+eval = [
+    { name = "bratly-eval" },
+    { name = "bratly-io-fs" },
+]
+io = [
+    { name = "bratly-io-fs" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "bratly-eval", marker = "extra == 'eval'", editable = "src_libs/bratly_eval" },
+    { name = "bratly-io-fs", marker = "extra == 'eval'", editable = "src_libs/bratly_io_fs" },
+    { name = "bratly-io-fs", marker = "extra == 'io'", editable = "src_libs/bratly_io_fs" },
+]
+provides-extras = ["io", "eval"]
 
 [[package]]
 name = "cffi"
