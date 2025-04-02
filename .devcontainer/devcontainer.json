@@ -1,0 +1,49 @@
+{
+  "name": "bratly",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "../.."
+  },
+  "workspaceFolder": "/workspaces/project",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/project,type=bind",
+  "postCreateCommand": "[ ! -d \".venv\" ] && uv venv || echo \".venv exists\"",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Basic formating
+        "editor.formatOnSave": true,
+        "files.trimFinalNewlines": true,
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.tabSize": 4,
+        //
+        "git.autofetch": "all",
+        // Python
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll": "explicit"
+          }
+        },
+        "python.defaultInterpreterPath": "/workspaces/project/.venv/bin/python",
+        "python.analysis.typeCheckingMode": "standard",
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.diagnosticSeverityOverrides": {
+          "reportUnusedImport": false
+        }
+      },
+      "extensions": [
+        "charliermarsh.ruff",
+        "njqdev.vscode-python-typehint",
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "tamasfe.even-better-toml",
+        "mrmlnc.vscode-duplicate",
+        "sanaajani.taskrunnercode",
+        "eamodio.gitlens"
+      ]
+    }
+  }
+}

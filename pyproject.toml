@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatch-core"]
+build-backend = "hatchling.build"
+
+[project]
+name = "bratly-ws"
+version = "0.1.2"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.uv.workspace]
+members = ["src_*/*"]
+
+[tool.uv.sources]
+bratly = { workspace = true }
+bratly-io-fs = { workspace = true }
+bratly-eval = { workspace = true }

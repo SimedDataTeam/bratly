@@ -1,0 +1,18 @@
+[project]
+name = "bratly-dev"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "bratly",
+]
+
+[project.scripts]
+bratly-dev = "bratly_dev:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+bratly = { workspace = true }

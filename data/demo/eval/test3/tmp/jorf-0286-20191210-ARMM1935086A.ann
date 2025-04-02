@@ -1,0 +1,174 @@
+T1	Lieu 385 390	Paris
+T2	Lieu 422 447	Place de l'Hôtel de ville
+T3	Lieu 455 460	Paris
+T4	Organisation 465 510	Université de technologie Belfort-Montbéliard
+T5	Lieu 550 558	Sevenans
+T6	Organisation 566 579	Belfort Cedex
+T7	Organisation 584 611	Université de Franche-Comté
+T8	Personne 650 665	Claude Goudimel
+T9	Lieu 673 681	Besançon
+T10	Organisation 686 691	Ecole
+T11	Lieu 777 786	rue Fréry
+T12	Lieu 794 801	Belfort
+T13	Lieu 806 815	VMC Pêche
+T14	Personne 858 875	général de Gaulle
+T15	Lieu 883 893	Morvillars
+T16	Lieu 898 904	Cordon
+T17	Lieu 946 979	Voie du futur, 27100 Val-de-Reuil
+T18	Organisation 984 1015	Crédit Agricole Normandie-Seine
+T19	Lieu 1047 1068	Chemin de la Breteque
+T20	Lieu 1076 1090	Bois-Guillaume
+T21	Lieu 1135 1149	rue des Cannes
+T22	Lieu 1157 1174	Luxeuil-les-Bains
+T23	Lieu 1179 1195	Ville du Tréport
+T24	Personne 1231 1250	François Mitterrand
+T25	Divers 1252 1254	CS
+T26	Divers 1268 1278	Le Tréport
+T27	Personne 1283 1301	GBNA Polycliniques
+T28	Personne 1344 1358	Claude Boucher
+T29	Organisation 1366 1380	Bordeaux Cedex
+T30	Personne 1437 1448	Alan Turing
+T31	Lieu 1456 1463	Aubière
+T32	Lieu 1468 1494	Communauté d'agglomération
+T33	Lieu 1495 1507	Riom Limagne
+T34	Lieu 1511 1518	Volcans
+T35	Personne 1552 1565	Jost-Pasquier
+T36	Lieu 1573 1577	Riom
+T37	Lieu 1622 1632	rue Barbès
+T38	Organisation 1640 1655	Montrouge Cedex
+T39	Organisation 1660 1665	OBLUX
+T40	Lieu 1700 1712	rue Maublanc
+T41	Lieu 1720 1725	Paris
+T42	Personne 1730 1739	Limagrain
+T43	Lieu 1789 1809	63360 Saint-Beauzire
+T44	Personne 1814 1834	Tarrerias Bonjean SE
+T45	Organisation 1866 1874	Chabenty
+T46	Personne 1882 1893	Chabreloche
+T47	Organisation 1898 1912	FPT Powertrain
+T48	Personne 1945 1958	Bourbon Lancy
+T49	Personne 1997 2011	Pierre Timbaud
+T50	Lieu 2019 2027	Garchizy
+T51	Divers 2032 2048	JTEKT Automotive
+T52	Lieu 2090 2100	Strasbourg
+T53	Lieu 2108 2130	Chevigny-Saint-Sauveur
+T54	Organisation 2135 2159	Suntec Industries France
+T55	Organisation 2191 2199	ZI Dijon
+T56	Lieu 2207 2223	rue Lavoisier CS
+T57	Personne 2237 2250	Longvic Cedex
+T58	Lieu 2255 2258	CCI
+T59	Lieu 2350 2355	Dijon
+T60	Lieu 2360 2374	Ville de Autun
+T61	Lieu 2406 2420	Hôtel de ville
+T62	Personne 2436 2447	Autun Cedex
+T63	Divers 2452 2478	CIAS Grand Autunois Morvan
+T64	Lieu 2522 2532	Bois Sapin
+T65	Lieu 2540 2545	Autun
+T66	Lieu 2594 2610	rue de la Troude
+T67	Lieu 2618 2639	Ayguemorte-les-Graves
+T68	Organisation 2642 2656	Privacy Impact
+T69	Lieu 2693 2709	rue de Charenton
+T70	Lieu 2717 2722	Paris
+T71	Personne 2727 2743	EHPAD Larrazkena
+T72	Lieu 2789 2802	Missionnaires
+T73	Personne 2810 2819	Hasparren
+T74	Organisation 2824 2838	Groupe Cybelia
+T75	Lieu 2871 2874	Z.I
+T76	Lieu 2878 2884	Palays
+T77	Lieu 2890 2909	rue des Cosmonautes
+T78	Lieu 2917 2925	Toulouse
+T79	Lieu 2941 2953	Châtel-Guyon
+T80	Lieu 2990 3013	rue de l'hôtel de Ville
+T81	Lieu 3021 3033	Châtel-Guyon
+T82	Lieu 3038 3063	Université Grenoble-Alpes
+T83	Lieu 3101 3109	Grenoble
+T84	Organisation 3122 3153	Université de Clermont-Auvergne
+T85	Personne 3199 3218	François Mitterrand
+T86	Divers 3220 3222	CS
+T87	Lieu 3236 3252	Clermont-Ferrand
+T88	Lieu 3257 3279	Communauté de communes
+T89	Lieu 3345 3355	Bois Sapin
+T90	Lieu 3363 3368	Autun
+T91	Organisation 3373 3380	Conseil
+T92	Lieu 3398 3410	Loir-et-Cher
+T93	Lieu 3442 3462	Hôtel du département
+T94	Lieu 3464 3486	place de la République
+T95	Divers 3494 3505	Blois Cedex
+T96	Organisation 3510 3538	Agglomération pays d'Issoire
+T97	Lieu 3577 3600	boulevard André Malraux
+T98	Personne 3608 3615	Issoire
+T99	Lieu 3628 3635	Issoire
+T100	Personne 3674 3689	Eugène Gauttier
+T101	Personne 3697 3704	Issoire
+T102	Divers 3748 3751	ZAE
+T103	Divers 3752 3767	Les Terres d'Or
+T104	Lieu 3778 3793	Saint-Philibert
+T105	Personne 3801 3818	Gevrey-Chambertin
+T106	Lieu 3871 3880	Compiègne
+T107	Lieu 3888 3896	Verberie
+T108	Organisation 3901 3928	CCI Bourgogne Franche-Comté
+T109	Lieu 3958 3963	Dijon
+T110	Lieu 3968 3983	URSSAF Bretagne
+T111	Personne 4022 4040	Robert d'Arbrissel
+T112	Lieu 4042 4061	quartier Beauregard
+T113	Lieu 4137 4141	Caen
+T114	Lieu 4149 4155	Bayeux
+T115	Lieu 4160 4195	Centre hospitalier universitaire de
+T116	Lieu 4196 4200	Nice
+T117	Organisation 4284 4296	Nice Cedex 1
+T118	Lieu 4342 4353	rue Réaumur
+T119	Lieu 4361 4366	Paris
+T120	Divers 4371 4380	SeaSatCom
+T121	Lieu 4426 4436	Puissanton
+T122	Lieu 4447 4448	A
+T123	Personne 4456 4465	Vallauris
+T124	Lieu 4470 4497	Région Auvergne-Rhône-Alpes
+T125	Personne 4542 4561	François Mitterrand
+T126	Divers 4563 4565	CS
+T127	Lieu 4579 4589	Lyon Cedex
+T128	Organisation 4597 4623	Banque Populaire Bourgogne
+T129	Lieu 4675 4701	boulevard de la Trémouille
+T130	Lieu 4717 4722	Dijon
+T131	Personne 4787 4803	Marcelin Jourdan
+T132	Lieu 4811 4819	Bordeaux
+T133	Personne 4822 4832	- Sentinel
+T134	Personne 4872 4883	Victor Hugo
+T135	Lieu 4891 4907	Levallois-Perret
+T136	Lieu 4912 4917	Ville
+T137	Lieu 4921 4932	Colombelles
+T138	Personne 4970 4989	François Mitterrand
+T139	Lieu 4997 5008	Colombelles
+T140	Lieu 5052 5065	avenue Morane
+T141	Lieu 5076 5089	bâtiment Ader
+T142	Lieu 5097 5116	Vélizy-Villacoublay
+T143	Organisation 5121 5144	Air Caraïbes Atlantique
+T144	Personne 5184 5197	Louis Blériot
+T145	Lieu 5205 5224	Paray-Vieille-Poste
+T146	Lieu 5229 5234	Ville
+T147	Lieu 5238 5244	Dieppe
+T148	Lieu 5276 5291	parc Jehan Ango
+T149	Personne 5307 5319	Dieppe Cedex
+T150	Personne 5324 5344	Zimmer Biomet France
+T151	Lieu 5380 5394	rue du Chanoit
+T152	Lieu 5402 5410	Brognard
+T153	Organisation 5415 5427	Groupe Avril
+T154	Lieu 5466 5480	rue de Monceau
+T155	Lieu 5488 5493	Paris
+T156	Lieu 5500 5507	Atelier
+T157	Lieu 5546 5562	Clermont-Ferrand
+T158	Divers 5617 5619	CS
+T159	Lieu 5633 5657	Clermont-Ferrand Cedex 2
+T160	Divers 5662 5673	EcoTitanium
+T161	Personne 5715 5726	Alan Turing
+T162	Personne 5734 5741	Aubière
+T163	Organisation 5746 5750	UKAD
+T164	Divers 5789 5807	La Croix de Biolet
+T165	Lieu 5815 5836	Saint-Georges-de-Mons
+T166	Lieu 5841 5871	Ville de Bourbon-l'Archambault
+T167	Lieu 5914 5957	Hôtel de ville, 03160 Bourbon-l'Archambault
+T168	Lieu 5962 5996	Rectorat de l'académie de Bordeaux
+T169	Personne 6035 6059	Joseph de Carayon-Latour
+T170	Divers 6061 6063	CS
+T171	Organisation 6077 6091	Bordeaux Cedex
+T172	Organisation 6096 6118	CCI Nouvelle-Aquitaine
+T173	Lieu 6153 6171	place de la Bourse
+T174	Lieu 6179 6187	Bordeaux

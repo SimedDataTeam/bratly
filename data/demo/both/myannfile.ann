@@ -1,0 +1,16 @@
+T1	DET 0 3	The
+T2	NOUN 4 15	butterflies
+T3	NOUN 67 78	cockroaches
+R1	DN_RELATION Arg1:T1 Arg2:T2
+T4	DET 80 85	every
+T5	NOUN 86 89	cat
+T6	VERB 90 95	meows
+R2	NV_RELATION Arg1:T5 Arg2:T6
+N1	Reference T5 Wikidata:Q1022892	Cat
+T7	DET 105 109	some
+T8	NOUN 110 117	felines
+T9	VERB 125 129	meow
+*	Equiv T6 T9
+#1	AnnotatorNotes T1	This ann file is synthetic.
+A1	QUANTIFIER T4
+A2	QUANTIFIER T7

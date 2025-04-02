@@ -1,0 +1,55 @@
+T1	Organisation 160 165	PLINE
+T2	Divers 1256 1267	Vu l'arrêté
+T3	Divers 1336 1342	D. 589
+T4	Lieu 1425 1433	Arrêtent
+T5	Organisation 1482 1487	PLINE
+T6	Divers 1511 1518	INterne
+T7	Organisation 1702 1706	PLEX
+T8	Divers 1708 1718	PLateforme
+T9	Divers 1730 1737	EXterne
+T10	Lieu 1868 1872	Etat
+T11	Personne 1920 1932	Chapitre Ier
+T12	Organisation 1938 1945	SYSTÈME
+T13	Divers 1949 1962	COMMUNICATION
+T14	Divers 1963 1975	ÉLECTRONIQUE
+T15	Divers 1982 2011	DISPOSITION DES JURIDICTIONS 
+T16	Organisation 2056 2061	PLINE
+T17	Organisation 2096 2100	PLEX
+T18	Personne 2737 2748	Chapitre II
+T19	Divers 2754 2774	L'IDENTIFICATION DES
+T20	Organisation 2775 2784	PARTIES À
+T21	Divers 2788 2814	COMMUNICATION ÉLECTRONIQUE
+T22	Organisation 2818 2831	SA FIABILITÉ 
+T23	Organisation 2961 2966	PLINE
+T24	Organisation 2973 2977	PLEX
+T25	Organisation 3192 3215	ministère de la justice
+T26	Organisation 3460 3465	PLINE
+T27	Organisation 3884 3889	PLINE
+T28	Organisation 4017 4022	PLINE
+T29	Personne 4311 4323	Chapitre III
+T30	Organisation 4332 4340	SÉCURITÉ
+T31	Divers 4350 4369	CONFIDENTIALITÉ DES
+T32	Divers 4393 4406	INTÉGRITÉ DES
+T33	Divers 4407 4416	DOCUMENTS
+T34	Organisation 4417 4426	TRANSMIS 
+T35	Organisation 4722 4727	HTTPS
+T36	Divers 4729 4764	HyperText Transfert Protocol Secure
+T37	Divers 4972 4975	AES
+T38	Divers 5098 5105	SHA-256
+T39	Organisation 5602 5607	PLINE
+T40	Organisation 5614 5618	PLEX
+T41	Divers 5665 5669	RPVJ
+T42	Organisation 5800 5805	PLINE
+T43	Organisation 5812 5816	PLEX
+T44	Organisation 6506 6511	PLINE
+T45	Organisation 6518 6522	PLEX
+T46	Organisation 6700 6705	PLINE
+T47	Organisation 6712 6716	PLEX
+T48	Lieu 7457 7468	îles Wallis
+T49	Lieu 7472 7478	Futuna
+T50	Lieu 7501 7519	Nouvelle-Calédonie
+T51	Lieu 7526 7545	Polynésie française
+T52	Divers 7799 7821	Journal officiel de la
+T53	Lieu 7822 7842	République française
+T54	Personne 7980 8006	V. Malbec La ministre des
+T55	Personne 8094 8106	E. Berthier 
