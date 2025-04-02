@@ -2,6 +2,25 @@
 
 **bratly** is a simple Python library to create, manipulate, compare (collections of) annotated documents in [Brat standoff format](https://brat.nlplab.org/standoff.html)
 
+## Getting started
+ [Build annotations programmatically - first entities in a toy example](src_devs/bratly_eval_dev/src/bratly_eval_dev/notebooks/demo.ipynb)
+
+## Installation
+Bratly can be installed with optional extras depending on your needs.
+
+Core Bratly package (basic installation):
+
+`pip install bratly`
+
+Bratly with IO support (includes bratly_io_fs):
+
+`pip install bratly[io]`
+
+Bratly with evaluation tools (includes bratly_io_fs and bratly_eval):
+
+`pip install bratly[eval]`
+
+
 ## Why bratly ?
 
 - a simpler, restricted set of existing brat objects/types
@@ -31,10 +50,6 @@
 
 - Fragment : a fragment of text within an entity annotation. Defined by starting and ending character positions
 
-
-## Getting started
-
- [Build annotations programmatically - first entities in a toy example](src_devs/bratly_eval_dev/src/bratly_eval_dev/notebooks/demo.ipynb)
 
 ## Contact
 This work has been performed by the [Division of Medical Information Sciences (SIMED) from the University Hospitals of Geneva](https://www.hug.ch/sciences-de-linformation-medicale) whose contact details are available [here](https://www.hug.ch/sciences-de-linformation-medicale/infos-pratiques).
