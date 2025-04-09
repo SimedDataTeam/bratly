@@ -1,7 +1,7 @@
 [project]
 name = "bratly"
 version = "0.1.2"
-description = "Add your description here"
+description = "a simple Python library to create, manipulate, compare (collections of) annotated documents in Brat standoff format"
 requires-python = ">=3.10"
 dependencies = ["pydantic>=2.10.6"]
 
