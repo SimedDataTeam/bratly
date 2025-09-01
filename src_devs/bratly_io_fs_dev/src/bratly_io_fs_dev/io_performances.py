@@ -1,5 +1,6 @@
 import time
 from pathlib import Path
+
 from bratly.collection_types import DocumentCollection
 from bratly_io_fs import read_document_collection_from_folder, write_ann_files_in_folder
 
@@ -13,6 +14,7 @@ def main(path_datasets: str = "./data/bratly_datasets/"):
 
     Returns:
         Dictionary mapping folder names to processing times (in seconds)
+
     """
     results = {}
 
@@ -37,11 +39,11 @@ def main(path_datasets: str = "./data/bratly_datasets/"):
         print(f"Working with {folder.name}")
         start_time = time.time()
         mydc = read_document_collection_from_folder(str(folder))
-        assert(type(mydc) == DocumentCollection)
+        assert type(mydc) is DocumentCollection
         end_time = time.time()
 
         elapsed_time = end_time - start_time
-        folder_results["read_time"] = read_time = elapsed_time
+        folder_results["read_time"] = elapsed_time
         nbdocs = len(mydc.documents)
         print(f"DocumentCollection '{folder.name}' read in {elapsed_time:.4f} seconds - it contains {nbdocs} annotated files whose statistics are:")
         annot_stats = mydc.stats_annotation_types()

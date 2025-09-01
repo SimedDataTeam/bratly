@@ -2,7 +2,7 @@ T1	DET 0 3	The
 T2	NOUN 4 15	butterflies
 T3	NOUN 67 78	cockroaches
 R1	DN_RELATION Arg1:T1 Arg2:T2
-T4	DET 80 85	every
+T4	DET 80 85	Every
 T5	NOUN 86 89	cat
 T6	VERB 90 95	meows
 R2	NV_RELATION Arg1:T5 Arg2:T6

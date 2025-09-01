@@ -28,7 +28,7 @@ def list_files_from_folder(path: str) -> list[str]:
 
 
 def parse_and_fix_ann_grammar(ann_content: str) -> str:
-    """
+    r"""
     Parse ann file to check:
     - if each line matches with one of our Annotations regex properly (raise Exception if no match !)
     - in the same time: check the appropriateness of the Fragment indices wrt the content
@@ -37,20 +37,18 @@ def parse_and_fix_ann_grammar(ann_content: str) -> str:
     - returns the fixed ann file, if everything is good.
     """
     regex_dico = {
-        "T": r"^T\d+\t[\w\_-]+ \d+ \d+(;\d+ \d+)*\t.*",  # Entity
-        "R": r"^R\d+\t[\w\_-]+ \w+:T\d+ \w+:T\d+",  # Relation
-        "A": r"^A\d+\t[\w\_-]+( \w+)+",  # Attribute
-        "M": r"^M\d+\t[\w\_-]+( \w+)+",  # Attribute
-        "#": r"^#\d*\t[\w\_\.-]+ \w+\t.*",  # Note
-        "N": r"^N\d+\t[\w\_-]+ \w+ \w+:\w+\t.+",  # Normalization
-        "*": r"^\*\t[\w\_-]+( T\d)+",  # Equivalence
-        "E": r"^E\d+\t[\w\_-]+:[TE]\d+( \w+:[TE]\d+)+",  # Event
+        "T": r"^T\d+\t[\w\_/-]+ \d+ \d+(;\d+ \d+)*\t.*",  # Entity
+        "R": r"^R\d+\t[\w\_/-]+ \w+:T\d+ \w+:T\d+",  # Relation
+        "A": r"^A\d+\t[\w\_/-]+( \w+)+",  # Attribute
+        "M": r"^M\d+\t[\w\_/-]+( \w+)+",  # Attribute
+        "#": r"^#\d*\t[\w\_/\.-]+ \w+\t.*",  # Note
+        "N": r"^N\d+\t[\w\_/-]+ \w+ \w+:\w+\t.+",  # Normalization
+        "*": r"^\*\t[\w\_/-]+( T\d)+",  # Equivalence
+        "E": r"^E\d+\t[\w\_/-]+:[TE]\d+( \w+:[TE]\d+)+",  # Event
     }
-    # Check if CRLF exists first (\r\n)
-    if "\r\n" in ann_content:
-        ann_contents = ann_content.split("\r\n")
-    else:  # If not, LF by default
-        ann_contents = ann_content.split("\n")
+    # Check if CRLF exists first (\r\n) else LF by default
+    ann_contents = ann_content.split("\r\n") if "\r\n" in ann_content else ann_content.split("\n")
+
     for i, line in enumerate(ann_contents):
         if line == "":
             continue
@@ -112,11 +110,9 @@ def read_ann_files_from_folder(path: str, verbose: bool = False) -> dict[str, st
     """Returns a dictionary containing the content for each filename (annotations)"""
     filenames = glob.glob(path + "/*.ann")
     ret = {}
-    i = 0
     if verbose:
         print("Reading folder", path, ":")
-    for filename in filenames:
-        i += 1
+    for i, filename in enumerate(filenames):
         ret[basename(filename)] = read_from_file(filename)
         if verbose:
             print(i, "/", len(filenames), end="\r")
@@ -148,13 +144,13 @@ def read_and_load_ann_file(
     if grammar_check:
         ann_str = parse_and_fix_ann_grammar(ann_str)
     output = parse_ann_file(
-        annstr= ann_str,
-        filepath= path,
+        annstr=ann_str,
+        filepath=path,
         sorting=sorting,
         no_duplicates=no_duplicates,
         renumerotize=renumerotize,
         version=version,
-        comment=comment
+        comment=comment,
     )
     if output is None:
         print(f"Warning: AnnotationCollection associated to {path} is None.")
@@ -194,7 +190,7 @@ def read_and_load_txt_file(
             "- making a Document instance without AnnCollection.",
         )
         # return Document with Empty ann collection.
-        return Document(txtpath, doc_version, doc_comment)
+        return Document(fullpath=txtpath, version=doc_version, comment=doc_comment)
     if annpath == "" or annpath is None:
         # first attempt: replace the extension of txtpath (.txt) using .ann (same directory)
         annpath = splitext(txtpath)[0] + ".ann"
@@ -219,14 +215,14 @@ def read_and_load_txt_file(
                         txtpath,
                         "- making a Document instance without AnnCollection.",
                     )
-                    return Document(txtpath, doc_version, doc_comment)
+                    return Document(fullpath=txtpath, version=doc_version, comment=doc_comment)
             else:
                 print(
                     "No corresponding ann file found for txt:",
                     txtpath,
                     "- making a Document instance without AnnCollection.",
                 )
-                return Document(txtpath, doc_version, doc_comment)
+                return Document(fullpath=txtpath, version=doc_version, comment=doc_comment)
 
     # being there means we have a valid annpath
     annotation_collection = read_and_load_ann_file(
@@ -239,17 +235,16 @@ def read_and_load_txt_file(
         comment=ann_comment,
     )
     if isinstance(annotation_collection, AnnotationCollection):
-        return Document(txtpath, doc_version, doc_comment, [annotation_collection])
-    else:
-        print(f"Warning: AnnotationCollection is not included in Document {txtpath}")
-        return Document(txtpath, doc_version, doc_comment, [])
+        return Document(fullpath=txtpath, version=doc_version, comment=doc_comment, annotation_collections=[annotation_collection])
+    print(f"Warning: AnnotationCollection is not included in Document {txtpath}")
+    return Document(fullpath=txtpath, version=doc_version, comment=doc_comment, annotation_collections=[])
 
 
 def parse_ann_line(
     line: str,
     entities: dict[str, EntityAnnotation],
     annotations: dict[str, Annotation],
-    txtpath: str
+    txtpath: str,
 ) -> Optional[Annotation]:
     """Parses a line, identifies the type of annotation in the line, and returns a parsed Annotation with the corresponding class"""
     if not line:
@@ -355,8 +350,8 @@ def parse_ann_file(
     * one list for each annotation type (i.e., a list for EntityAnnotations, one for RelationAnnotations, etc.)
     """
     # Keeping track of annotations during parsing
-    entities_dict: dict[str, EntityAnnotation] = dict()
-    annotations_dict: dict[str, Annotation] = dict()
+    entities_dict: dict[str, EntityAnnotation] = {}
+    annotations_dict: dict[str, Annotation] = {}
     # Parsing annotations
     annotations: list[Annotation] = []
     for line in annstr.splitlines():
@@ -394,14 +389,29 @@ def read_document_collection_from_folder(
     version: str = "0.0.1",
     comment: str = "Empty comment",
 ) -> Optional[DocumentCollection]:
-    """Reads txt and ann from a folder and builds a DocumentCollection from that"""
+    """
+    Reads txt and ann from a folder and builds a DocumentCollection from that.
+
+    Args:
+        path (str): The path to the folder containing the documents.
+        no_duplicates_ann (bool): Whether to remove duplicate annotations.
+        sort_ann (bool): Whether to sort annotations.
+        renumerotize_ann (bool): Whether to renumerotize annotations.
+        grammar_check_ann (bool): Whether to perform grammar check on annotations.
+        version (str): The version of the document collection.
+        comment (str): A comment for the document collection.
+
+    Returns:
+        Optional[DocumentCollection]: The constructed DocumentCollection or None if an error occurred.
+
+    """
     dico_txt = read_texts_from_folder(path)
     dico_ann = read_ann_files_from_folder(path)
     ann_filenames = list(dico_ann.keys())
     docs: list[Document] = []
     txt_name = ""
     try:
-        for txt_name in dico_txt.keys():
+        for txt_name in dico_txt:
             if txt_name.endswith(".txt"):
                 ann_name = ".ann".join(txt_name.rsplit(".txt", 1))
             elif txt_name.endswith(".TXT"):
