@@ -1,12 +1,13 @@
 """
-This module provides functions to count tokens and annotations in document collections and to collect statistics about annotated categories.
+Provide functions to count tokens and annotations in document collections and to collect statistics about annotated categories.
 
 Functions:
     - count_tokens_and_anns(folder: Path) -> tuple:
         Counts the total number of tokens and annotated tokens in a document collection.
 
     - stat_ann_categories(paths: list[Path|str], stats: dict = None, depth: int = 0) -> dict:
-        Collects and prints statistics about annotated categories in documents, including the number of tokens, annotated tokens, annotations, and documents, as well as the occurrences of each annotation type.
+        Collects and prints statistics about annotated categories in documents, including the number of tokens,
+        annotated tokens, annotations, and documents, as well as the occurrences of each annotation type.
 """
 
 from pathlib import Path
@@ -51,7 +52,7 @@ def count_tokens_and_anns(folder: Path):
     return len(doc_coll.documents), n_tokens, n_ann_tokens
 
 
-def stat_ann_categories(paths: list[Path | str], max_n: int = -1, stats: dict | None = None, depth: int = 0, max_depth: int = 0) -> dict:
+def stat_ann_categories(paths: list[Path | str], stats: dict | None = None, depth: int = 0, max_depth: int = 0) -> dict:
     """
     Collects and prints statistics about annotated categories in documents.
     """
@@ -69,7 +70,7 @@ def stat_ann_categories(paths: list[Path | str], max_n: int = -1, stats: dict | 
 
     for path in paths:
         if isinstance(path, str):
-            path = Path(path)
+            path = Path(path)  # noqa: PLW2901
 
         items = list(path.iterdir())
         if depth < max_depth:
@@ -82,10 +83,10 @@ def stat_ann_categories(paths: list[Path | str], max_n: int = -1, stats: dict | 
         if doc_coll is not None:
             for doc in doc_coll.documents:
                 for ann in doc.annotation_collections[0].annotations:
-                    stats["ann_types"][ann.label] += stats["ann_types"].get(ann.label, 0) + 1
+                    stats["ann_types"][ann.label] = stats["ann_types"].get(ann.label, 0) + 1
                 stats["n_tokens"] += len(doc.text.replace("\n", " ").replace("\t", " ").split())
                 stats["n_annotated_tokens"] += sum(
-                    [len(ann.content.replace("\n", " ").replace("\t", " ").split()) for ann in doc.annotation_collections[0].annotations if isinstance(ann, EntityAnnotation)]
+                    [len(ann.content.replace("\n", " ").replace("\t", " ").split()) for ann in doc.annotation_collections[0].annotations if isinstance(ann, EntityAnnotation)],
                 )
                 stats["n_annotations"] += len(doc.annotation_collections[0].annotations)
                 stats["n_documents"] += 1
@@ -95,11 +96,11 @@ def stat_ann_categories(paths: list[Path | str], max_n: int = -1, stats: dict | 
         if "text_spurious" in stats["ann_types"]:
             del stats["ann_types"]["text_spurious"]
 
-        df = pd.DataFrame(stats["ann_types"].items(), columns=["label", "count"])
-        df["percentage"] = 100 * df["count"] / df["count"].sum()
-        df = df.sort_values("count", ascending=False)
+        my_df = pd.DataFrame(stats["ann_types"].items(), columns=["label", "count"])
+        my_df["percentage"] = 100 * my_df["count"] / my_df["count"].sum()
+        my_df = my_df.sort_values("count", ascending=False)
         del stats["ann_types"]
-        print(df)
+        print(my_df)
         print(stats)
         print("Percentage of annotated tokens: ", 100 * stats["n_annotated_tokens"] / stats["n_tokens"])
 

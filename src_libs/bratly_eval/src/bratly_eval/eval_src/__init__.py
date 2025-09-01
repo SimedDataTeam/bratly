@@ -1,10 +1,10 @@
 import os
 from itertools import compress
-from typing import List, Optional, cast
+from typing import Optional, cast
 
 import numpy as np
 import pandas as pd
-from bratly import AnnotationCollection, Document, DocumentCollection, EntityAnnotation, Fragment
+from bratly import AnnotationCollection, Document, DocumentCollection, EntityAnnotation
 from bratly_io_fs import (
     copy_txt_from_collection_to_another_path,
     parse_ann_file,
@@ -13,8 +13,7 @@ from bratly_io_fs import (
     write_ann_files_in_folder,
 )
 
-from ..agreement_types import *
-from .count_tokens import count_tokens_and_anns, stat_ann_categories
+from bratly_eval.agreement_types import Agreement, FragmentAgreement, MucCollection, MucTable
 
 
 def compare_annotations(
@@ -22,9 +21,10 @@ def compare_annotations(
     gold_standard_file: AnnotationCollection,
     filename: str,
     comparison_style="Naive",
-    originalFile=None,
+    original_file=None,
 ) -> tuple[MucTable, str]:
-    """Compares two annotation files and returns
+    """
+    Compares two annotation files and returns
     * the MucTable describing the similarity between the two files
     * and a string containing the CSV lines corresponding to the comparison of files.
     Several comparison styles are to be implemented. Currently only Naive style is supported.
@@ -35,40 +35,32 @@ def compare_annotations(
         annotations of the same sepearated by only whitespace in the original file might be joined.
     * Brat: Uses the definitions of the Brat standard (no related class, partial only if end matches)
     """
-    annotation_entities: List[EntityAnnotation] = cast(List[EntityAnnotation], annotation_file.get_annotations(descendant_type=EntityAnnotation))
-    gold_standard_entities: List[EntityAnnotation] = cast(List[EntityAnnotation], gold_standard_file.get_annotations(descendant_type=EntityAnnotation))
+    annotation_entities: list[EntityAnnotation] = cast(list[EntityAnnotation], annotation_file.get_annotations(descendant_type=EntityAnnotation))
+    gold_standard_entities: list[EntityAnnotation] = cast(list[EntityAnnotation], gold_standard_file.get_annotations(descendant_type=EntityAnnotation))
 
-    if not comparison_style in ["Naive", "Clean", "Largest", "Brat"]:
+    if comparison_style not in ["Naive", "Clean", "Largest", "Brat"]:
         raise NotImplementedError
-    if comparison_style == "Largest" and not isinstance(originalFile, str):
+    if comparison_style == "Largest" and not isinstance(original_file, str):
         raise NotImplementedError
 
     # Getting all fragments with a tuple key (annotation number, fragment number)
     af1 = sorted(
-        [
-            (m, n, f)
-            for m, a in enumerate(annotation_entities)
-            for n, f in enumerate(a.fragments)
-        ],
+        [(m, n, f) for m, a in enumerate(annotation_entities) for n, f in enumerate(a.fragments)],
         key=lambda x: x[2],
     )
     af2 = sorted(
-        [
-            (m, n, f)
-            for m, a in enumerate(gold_standard_entities)
-            for n, f in enumerate(a.fragments)
-        ],
+        [(m, n, f) for m, a in enumerate(gold_standard_entities) for n, f in enumerate(a.fragments)],
         key=lambda x: x[2],
     )
     if not af1 and not af2:
-        return MucTable([]), ""
+        return MucTable(agreements=[]), ""
     fragment_agreements1 = [[] for _ in range(len(af1))]
     fragment_agreements2 = [[] for _ in range(len(af2))]
     af2_starts = [a[2].start for a in af2]
     status_af2 = [True for _ in range(len(af2))]
     status_untouched = [True for _ in range(len(af2))]
     ns = list(range(len(af2)))
-    ms = list(range(len(af1)))
+
     j = 0
 
     # For all fragments in the parallel file find any potentially related gold fragments
@@ -80,25 +72,25 @@ def compare_annotations(
         potential_annotations = list(compress(af2[j:k], status_af2[j:k]))
         potential_indices = list(compress(ns[j:k], status_af2[j:k]))
         if len(potential_annotations) < 1:
-            fragment_agreements1[i].append((ann1[0], -1, FragmentAgreement(None, a1)))
-        for l, ann2 in enumerate(potential_annotations):
+            fragment_agreements1[i].append((ann1[0], -1, FragmentAgreement(gold_frag=None, parallel_frag=a1)))
+        for idx, ann2 in enumerate(potential_annotations):
             a2 = ann2[2]
             # If the gold fragment ends before this one
             if a2.end < a1.start:
-                if len(fragment_agreements2[potential_indices[l]]) < 1:
-                    fragment_agreements2[potential_indices[l]].append(
-                        (-1, ann2[0], FragmentAgreement(a2, None))
+                if len(fragment_agreements2[potential_indices[idx]]) < 1:
+                    fragment_agreements2[potential_indices[idx]].append(
+                        (-1, ann2[0], FragmentAgreement(gold_frag=a2, parallel_frag=None)),
                     )
-                status_af2[potential_indices[l]] = False
+                status_af2[potential_indices[idx]] = False
             # If they intersect
             else:
-                agreement = (ann1[0], ann2[0], FragmentAgreement(a2, a1))
-                fragment_agreements2[potential_indices[l]].append(agreement)
+                agreement = (ann1[0], ann2[0], FragmentAgreement(gold_frag=a2, parallel_frag=a1))
+                fragment_agreements2[potential_indices[idx]].append(agreement)
                 fragment_agreements1[i].append(agreement)
-                status_untouched[potential_indices[l]] = False
+                status_untouched[potential_indices[idx]] = False
         # If all gold fragments ends before this one
         if not fragment_agreements1[i]:
-            fragment_agreements1[i].append((ann1[0], -1, FragmentAgreement(None, a1)))
+            fragment_agreements1[i].append((ann1[0], -1, FragmentAgreement(gold_frag=None, parallel_frag=a1)))
 
         # Constrain for the next iteration
         j = np.searchsorted(status_af2, True)
@@ -107,89 +99,91 @@ def compare_annotations(
     for i, ann2 in enumerate(af2[j : len(status_af2)]):
         if len(fragment_agreements2[i + j]) < 1:
             fragment_agreements2[i + j].append(
-                (-1, ann2[0], FragmentAgreement(ann2[2], None))
+                (-1, ann2[0], FragmentAgreement(gold_frag=ann2[2], parallel_frag=None)),
             )
 
     tmp = []
     # Sort FragmentAgreements according the start and end of the agreement
     tmp1 = sorted(
-        [fa for sub in fragment_agreements1 for fa in sub], key=lambda x: (x[0], x[1])
+        [fa for sub in fragment_agreements1 for fa in sub],
+        key=lambda x: (x[0], x[1]),
     )
 
     fas = [fa[2] for fa in tmp1]
     last_different = 0
     gold_not_missing = set()
-    for i, a in enumerate(tmp1[:-1]):
+    for i, _ in enumerate(tmp1[:-1]):
         # If the next fragment agreement doesn't concern the same gold and parallel fragments
         if tmp1[i][0] != tmp1[i + 1][0] or tmp1[i][1] != tmp1[i + 1][1]:
             # not spurious
             if tmp1[i][1] != -1:
                 tmp.append(
                     Agreement(
-                        fas[last_different : i + 1],
-                        annotation_entities[tmp1[i][0]],
-                        gold_standard_entities[tmp1[i][1]],
-                    )
+                        fragment_agreements=fas[last_different : i + 1],
+                        parallel=annotation_entities[tmp1[i][0]],
+                        gold=gold_standard_entities[tmp1[i][1]],
+                    ),
                 )
             # spurious
             else:
                 tmp.append(
                     Agreement(
-                        fas[last_different : i + 1],
-                        annotation_entities[tmp1[i][0]],
-                        None,
-                    )
+                        fragment_agreements=fas[last_different : i + 1],
+                        parallel=annotation_entities[tmp1[i][0]],
+                        gold=None,
+                    ),
                 )
             last_different = i + 1
             gold_not_missing.add(tmp1[i][1])
-    # print('LS', last_different, tmp1, tmp1[last_different][1])
+
     # Process the remaining fragment agrements
     if len(tmp1) > 0:
-        if tmp1[last_different][1] != None and tmp1[last_different][1] > -1:
+        if tmp1[last_different][1] is not None and tmp1[last_different][1] > -1:
             tmp.append(
                 Agreement(
-                    fas[last_different : len(tmp1)],
-                    annotation_entities[tmp1[last_different][0]],
-                    gold_standard_entities[tmp1[last_different][1]],
-                )
+                    fragment_agreements=fas[last_different : len(tmp1)],
+                    parallel=annotation_entities[tmp1[last_different][0]],
+                    gold=gold_standard_entities[tmp1[last_different][1]],
+                ),
             )
         else:
             tmp.append(
                 Agreement(
-                    fas[last_different : len(tmp1)],
-                    annotation_entities[tmp1[last_different][0]],
-                    None,
-                )
+                    fragment_agreements=fas[last_different : len(tmp1)],
+                    parallel=annotation_entities[tmp1[last_different][0]],
+                    gold=None,
+                ),
             )
         gold_not_missing.add(tmp1[last_different][1])
     tmp2 = sorted(
-        [fa for sub in fragment_agreements2 for fa in sub], key=lambda x: (x[1], x[0])
+        [fa for sub in fragment_agreements2 for fa in sub],
+        key=lambda x: (x[1], x[0]),
     )
 
     fas = [fa[2] for fa in tmp2]
     last_different = 0
-    for i, a in enumerate(tmp2[:-1]):
+    for i, _ in enumerate(tmp2[:-1]):
         if tmp2[i][1] != tmp2[i + 1][1]:
-            if not tmp2[i][1] in gold_not_missing:
+            if tmp2[i][1] not in gold_not_missing:
                 tmp.append(
                     Agreement(
-                        fas[last_different : i + 1],
-                        None,
-                        gold_standard_entities[tmp2[i][1]],
-                    )
+                        fragment_agreements=fas[last_different : i + 1],
+                        parallel=None,
+                        gold=gold_standard_entities[tmp2[i][1]],
+                    ),
                 )
             last_different = i + 1
 
-    if len(tmp2) > 0:
-        if not tmp2[-1][1] in gold_not_missing:
-            tmp.append(
-                Agreement(
-                    fas[last_different:], None, gold_standard_entities[tmp2[-1][1]]
-                )
-            )
+    if len(tmp2) > 0 and tmp2[-1][1] not in gold_not_missing:
+        tmp.append(
+            Agreement(
+                fragment_agreements=fas[last_different:],
+                parallel=None,
+                gold=gold_standard_entities[tmp2[-1][1]],
+            ),
+        )
     csv = "".join([c.to_csv(filename=filename) for c in tmp])
-    mt = MucTable(tmp)
-    # print(mt.get_statistics())
+    mt = MucTable(agreements=tmp)
     return (mt, csv)
 
 
@@ -200,16 +194,24 @@ def write_results(
     csvc: str = "",
     muc_coll: Optional[MucCollection] = None,
     comparison_type=MucTable.RELAXED_COMPARISON,
-    verbose: bool = False,
     muc_with_help: bool = False,
 ):
     if eval_folder != "":
         if not os.path.exists(eval_folder):
             os.makedirs(eval_folder)
-        assert(type(df_agreement) == pd.DataFrame)
-        df_agreement.to_excel(
-            os.path.join(eval_folder, eval_file + "_agreement_report.xlsx")
+        assert type(df_agreement) is pd.DataFrame
+
+        missing_counts = df_agreement[df_agreement["eval_tag"] == "MISSING"]["gold_content"].value_counts().reset_index().rename(columns={"index": "gold_content", "gold_content": "count"})
+
+        # 2. Filter and count for SPURIOUS
+        spurious_counts = (
+            df_agreement[df_agreement["eval_tag"] == "SPURIOUS"]["parallel_content"].value_counts().reset_index().rename(columns={"index": "parallel_content", "parallel_content": "count"})
         )
+
+        with pd.ExcelWriter(os.path.join(eval_folder, eval_file + "_agreement_report.xlsx")) as writer:
+            df_agreement.to_excel(writer, sheet_name="original", index=False)
+            missing_counts.to_excel(writer, sheet_name="missing_counts", index=False)
+            spurious_counts.to_excel(writer, sheet_name="spurious_counts", index=False)
 
         with open(
             os.path.join(eval_folder, eval_file + "_agreement_report.csv"),
@@ -219,22 +221,40 @@ def write_results(
             f.write(csvc)
 
         # Generate the MUC (Message Understanding Conferance) Table (ref: https://github.com/savkov/bratutils)
-        print("writing muc table"+ os.path.join(eval_folder, eval_file + "_muc_table.txt"))
+        print("writing muc table" + os.path.join(eval_folder, eval_file + "_muc_table.txt"))
         with open(
             os.path.join(eval_folder, eval_file + "_muc_table.txt"),
             "w",
             encoding="utf_8",
         ) as f:
-            assert(type(muc_coll) == MucCollection)
+            assert type(muc_coll) is MucCollection
             dico_stats = muc_coll.get_global_statistics(
-                comparison_type=comparison_type, with_help=muc_with_help
+                comparison_type=comparison_type,
+                with_help=muc_with_help,
             )
             for k, v in dico_stats.items():
                 result = str(k) + "-" + str(v) + "\n"
                 f.write(result)
 
 
-COLUMNS = "filename,eval_tag,parallel_id,parallel_label,parallel_start,parallel_end,parallel_fragments,parallel_content,gold_id,gold_label,gold_start,gold_end,gold_fragments,gold_content,interval_match"
+LIST_COLUMNS = [
+    "filename",
+    "eval_tag",
+    "parallel_id",
+    "parallel_label",
+    "parallel_start",
+    "parallel_end",
+    "parallel_fragments",
+    "parallel_content",
+    "gold_id",
+    "gold_label",
+    "gold_start",
+    "gold_end",
+    "gold_fragments",
+    "gold_content",
+    "interval_match",
+]
+COLUMNS = ",".join(LIST_COLUMNS)
 N_COLUMNS = len(COLUMNS.split(","))
 
 
@@ -249,17 +269,18 @@ def compare_folders(
     comparison_type=MucTable.RELAXED_COMPARISON,
     verbose: bool = False,
 ) -> tuple[MucCollection, str, pd.DataFrame]:
-    """Compares annotation files placed in two parallel folder.
+    """
+    Compares annotation files placed in two parallel folder.
     The function compares files with the same name and returns a MucCollection
-    and the content of all agreements in CSV format."""
+    and the content of all agreements in CSV format.
+    """
     parallel_texts = read_ann_files_from_folder(parallel_folder)
     gold_texts = read_ann_files_from_folder(gold_folder)
-    muc_coll = MucCollection([])
+    muc_coll = MucCollection(muc_tables=[])
     csvc = COLUMNS + "\n" if header else ""
-    df_agreement = pd.DataFrame(columns=COLUMNS.split(","))
+    df_agreement = pd.DataFrame(columns=LIST_COLUMNS)
 
     for fname, text in parallel_texts.items():
-        # print(fname, parse_textfile(gold_texts[fname]))
         if verbose:
             print("fname", fname)
             print("text", text)
@@ -275,7 +296,6 @@ def compare_folders(
             mt, csv = compare_annotations(anns_text, anns_gold, fname)
             muc_coll.muc_tables.append(mt)
             csvc += csv
-            # print(csv)
 
             for line in csv.split("\n"):
                 line_split = line.split(",")
@@ -283,7 +303,7 @@ def compare_folders(
                     df_agreement.loc[len(df_agreement)] = line_split
                 else:
                     pass
-                #print("wrong number of columns" + str(len(line_split)) + line)
+                # print("wrong number of columns" + str(len(line_split)) + line)
 
     write_results(
         eval_folder=eval_folder,
@@ -292,7 +312,6 @@ def compare_folders(
         csvc=csvc,
         muc_coll=muc_coll,
         comparison_type=comparison_type,
-        verbose=verbose,
         muc_with_help=muc_with_help,
     )
 
@@ -300,7 +319,7 @@ def compare_folders(
 
 
 def compare_pairs_of_folders(
-    pairs: List[tuple[str, str]],  # parallel, gold
+    pairs: list[tuple[str, str]],  # parallel, gold
     header: bool = True,
     eval_folder: str = "",
     eval_file: str = "",
@@ -308,9 +327,8 @@ def compare_pairs_of_folders(
     keep_specific_annotations: Optional[list[str]] = None,
     comparison_type=MucTable.RELAXED_COMPARISON,
     verbose: bool = False,
-) -> tuple[MucCollection, str, pd.DataFrame]|None:
-
-    global_muc_coll = MucCollection([])
+) -> tuple[MucCollection, str, pd.DataFrame] | None:
+    global_muc_coll = MucCollection(muc_tables=[])
     global_csvc = COLUMNS + "\n" if header else ""
     global_df_agreement = pd.DataFrame(columns=COLUMNS.split(","))
 
@@ -332,9 +350,6 @@ def compare_pairs_of_folders(
         global_csvc += csvc
         global_df_agreement = pd.concat([global_df_agreement, df_agreement])
 
-
-    # print(global_muc_coll)
-    # print(global_muc_coll.muc_tables)
     write_results(
         eval_folder=eval_folder,
         eval_file=eval_file,
@@ -342,7 +357,6 @@ def compare_pairs_of_folders(
         muc_coll=global_muc_coll,
         csvc=global_csvc,
         comparison_type=comparison_type,
-        verbose=verbose,
         muc_with_help=muc_with_help,
     )
 
@@ -355,12 +369,11 @@ def compare_many_folders(
     muc_with_help: bool = False,
 ):
     """
-    do 3 comparisons
+    Do 3 comparisons
     == stats by entity types
     == F-scores
     == error types compared to gold
     """
-
     strout = basefolder
     strout += str(folders) + "\n"
     strout += "\n== stats by entity types\n"
@@ -369,7 +382,7 @@ def compare_many_folders(
 
     mc = {}
     csv = {}
-    df = {}
+    my_df = {}
     stats = {}
 
     for i in range(1, len(folders)):
@@ -379,15 +392,15 @@ def compare_many_folders(
             strout += f"comparing {f1} {f2}" + "\n"
             print(f"comparing {f1} {f2}")
 
-            mc[f"{i-1}_{j}"], csv[f"{i-1}_{j}"], df[f"{i-1}_j"] = compare_folders(
+            mc[f"{i - 1}_{j}"], csv[f"{i - 1}_{j}"], my_df[f"{i - 1}_{j}"] = compare_folders(
                 f1,
                 f2,
                 header=header,
                 eval_folder=eval_folder,
-                eval_file=f"{folders[i-1]}_{folders[j]}",
+                eval_file=f"{folders[i - 1]}_{folders[j]}",
                 muc_with_help=muc_with_help,
             )
-            stats[f"{i-1}_{j}"] = mc[f"{i-1}_{j}"].get_global_statistics()
+            stats[f"{i - 1}_{j}"] = mc[f"{i - 1}_{j}"].get_global_statistics()
 
     strout += "\n== F-scores\n"
     print("== F-scores")
@@ -398,8 +411,8 @@ def compare_many_folders(
         strout += folders[i - 1]
         strout += "\t" * (i - 1)
         for j in range(i, len(folders)):
-            if f"{i-1}_{j}" in stats:
-                strout += f"\t{stats[f'{i-1}_{j}']['F1']:.2f}"
+            if f"{i - 1}_{j}" in stats:
+                strout += f"\t{stats[f'{i - 1}_{j}']['F1']:.2f}"
         strout += "\n"
     strout += "\n"
 
@@ -413,10 +426,7 @@ def compare_many_folders(
     incorrects = [str(sum(mc[f"{0}_{i}"].incorrects)) for i in range(1, len(folders))]
     strout += "INCORRECT\t" + "\t".join(incorrects) + "\n"
 
-    partials = [
-        str(sum(mc[f"{0}_{i}"].partial_As + mc[f"{0}_{i}"].partial_Ss))
-        for i in range(1, len(folders))
-    ]
+    partials = [str(sum(mc[f"{0}_{i}"].partial_As + mc[f"{0}_{i}"].partial_Ss)) for i in range(1, len(folders))]
     strout += "PARTIAL\t\t" + "\t".join(partials) + "\n"
 
     missings = [str(sum(mc[f"{0}_{i}"].missings)) for i in range(1, len(folders))]
@@ -436,7 +446,7 @@ def count_entities_of_folder(folder, basefolder: str = "") -> tuple[dict, int, i
 
     # print(folder)
     dc = read_document_collection_from_folder(folder)
-    assert(type(dc) == DocumentCollection)
+    assert type(dc) is DocumentCollection
     for doc in dc.documents:
         n_file += 1
         # print(doc.filename_without_ext)
@@ -458,7 +468,8 @@ def count_entities_of_many_folders(folders: list[str], basefolder: str = "") -> 
     for folder in folders:
         # print(folder)
         types[folder], n_file[folder], n_ann[folder] = count_entities_of_folder(
-            folder, basefolder=basefolder
+            folder,
+            basefolder=basefolder,
         )
         # print(types[folder].keys())
         type_list.extend(list(types[folder].keys()))
@@ -500,15 +511,15 @@ def create_union_gold_candidate_sets(
         os.makedirs(path_output_newgold_folder)
     except OSError:
         print(
-            "Security: The output folder already exists! Please, delete the folder, or change the output path."
+            "Security: The output folder already exists! Please, delete the folder, or change the output path.",
         )
-        return None
+        return
 
     # read doc cols
     colgs: DocumentCollection = cast(DocumentCollection, read_document_collection_from_folder(path_doc_col_gs))
     colcs: DocumentCollection = cast(DocumentCollection, read_document_collection_from_folder(path_doc_col_auto))
 
-    col_new: DocumentCollection = DocumentCollection(path_output_newgold_folder)
+    col_new: DocumentCollection = DocumentCollection(folderpath=path_output_newgold_folder)
 
     for docgs in colgs.documents:
         # for each docgs, find the actual doccs
@@ -527,9 +538,7 @@ def create_union_gold_candidate_sets(
             # find the CORRECT annotations, add _both suffix
             for elt1 in entitesauto:
                 for elt2 in entitesgs:
-                    if (
-                        elt1.fragments == elt2.fragments and elt1.label == elt2.label
-                    ):  # same tag, and same fragments
+                    if elt1.fragments == elt2.fragments and elt1.label == elt2.label:  # same tag, and same fragments
                         elt1.label = elt1.label + "_both"
                         elt2.label = elt2.label + "_both"
 
@@ -538,21 +547,23 @@ def create_union_gold_candidate_sets(
             for elt in entitesauto:
                 if elt.label in labels or elt.label.endswith("_both"):
                     continue
-                else:
-                    labels.append(elt.label)
+                labels.append(elt.label)
             for elt in entitesgs:
                 if elt.label in labels or elt.label.endswith("_both"):
                     continue
-                else:
-                    labels.append(elt.label)
+                labels.append(elt.label)
 
             # add the suffixes
             for elt in labels:
                 annotcol_gs.replace_annotation_labels(
-                    old_name=elt, new_name=elt + "_gold", specific_type=EntityAnnotation
+                    old_name=elt,
+                    new_name=elt + "_gold",
+                    specific_type=EntityAnnotation,
                 )
                 annotcol_cs.replace_annotation_labels(
-                    old_name=elt, new_name=elt + "_auto", specific_type=EntityAnnotation
+                    old_name=elt,
+                    new_name=elt + "_auto",
+                    specific_type=EntityAnnotation,
                 )
 
             # we create a new annotcol which is the union of both
@@ -562,8 +573,9 @@ def create_union_gold_candidate_sets(
 
             # new doc to add
             doc_new = Document(
-                os.path.join(
-                    path_output_newgold_folder, docgs.filename_without_ext + ".txt"
+                fullpath=os.path.join(
+                    path_output_newgold_folder,
+                    docgs.filename_without_ext + ".txt",
                 ),
                 annotation_collections=[annotcol_gs],
             )
@@ -578,6 +590,6 @@ def create_union_gold_candidate_sets(
     # also writing the txt file
     if copy_txt_files is True:
         print(
-            f"Also writing the txt files, taken from gold, to path:{path_output_newgold_folder}"
+            f"Also writing the txt files, taken from gold, to path:{path_output_newgold_folder}",
         )
         copy_txt_from_collection_to_another_path(colgs, path_output_newgold_folder)
