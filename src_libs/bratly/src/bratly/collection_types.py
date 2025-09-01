@@ -1,10 +1,9 @@
 import json
-from io import open as io_open
 from operator import itemgetter
 from os.path import basename, dirname, splitext
-from typing import Any, List, Optional, Union
-from pydantic import BaseModel
-from .exceptions import ParsingError
+from typing import Any, Optional, Union
+
+from pydantic import BaseModel, field_validator, model_validator
 
 from .annotation_types import (
     Annotation,
@@ -17,32 +16,43 @@ from .annotation_types import (
     NoteAnnotation,
     RelationAnnotation,
 )
+from .exceptions import ParsingError
 
 
 class AnnotationCollection(BaseModel):
     """A set of Annotations, one txt file can be linked to one or multiple AnnotationCollection (multiple versions, different annot types...)"""
 
     # metadata
-    version: str
-    comment: str
+    version: str = "0.0.1"
+    comment: str = "Empty comment"
     # actual data
-    annotations: list[Annotation]
+    annotations: list[Annotation] = []
 
-    def __init__(
-        self,
-        annotations: Optional[list[Annotation]] = None,
-        version: str = "0.0.1",
-        comment: str = "Empty comment",
-    ) -> None:
-        if annotations is None:
-            object.__setattr__(self, "annotations", [])
-        else:
-            object.__setattr__(self, "annotations", annotations)
-        object.__setattr__(self, "version", version)
-        object.__setattr__(self, "comment", comment)
+    class Config:
+        validate_assignment = True
+
+    @field_validator("version", "comment")
+    def validate_acol_metadata(cls, v):
+        if type(v) is str and len(v) > 0:
+            return v
+        raise ParsingError(
+            "Badly initialized AnnotationCollection (version and comment must be non-empty strings)\n",
+        )
+
+    @field_validator("annotations")
+    def validate_annotations(cls, v):
+        if isinstance(v, list):
+            if len(v) == 0:
+                return []
+            if all(isinstance(item, Annotation) for item in v):
+                return v
+        raise ParsingError(
+            "Badly initialized AnnotationCollection (annotations must be a list of Annotation instances)\n",
+        )
 
     def get_annotations(
-        self, descendant_type=None
+        self,
+        descendant_type=None,
     ) -> Union[
         list[Annotation],
         list[EntityAnnotation],
@@ -118,13 +128,13 @@ class AnnotationCollection(BaseModel):
             assert isinstance(attribute, AttributeAnnotation)
             if attribute.component not in self.annotations:
                 anns_to_delete.append(attribute)
-
         equivalences = self.get_annotations(descendant_type=EquivalenceAnnotation)
         for equivalence in equivalences:
             assert isinstance(equivalence, EquivalenceAnnotation)
             for ann_eq in equivalence.entities:
                 if ann_eq not in self.annotations:
                     anns_to_delete.append(equivalence)
+                    break
 
         normalizations = self.get_annotations(descendant_type=NormalizationAnnotation)
         for normalization in normalizations:
@@ -194,7 +204,7 @@ class AnnotationCollection(BaseModel):
         new_list.extend(notes)
         new_list.extend(other_annot)
         # sorted list is updated
-        object.__setattr__(self, "annotations", new_list)
+        self.annotations = new_list
 
     def remove_duplicates(self) -> None:
         """Remove duplicates annotation"""
@@ -264,7 +274,8 @@ class AnnotationCollection(BaseModel):
                     normalizations.append(ann)
             else:
                 raise ValueError("Unsupported type. Should be an annotation type.")
-        object.__setattr__(self, "annotations", res)
+
+        self.annotations = res
 
         # remove orphan annotations
         self.remove_orphan_notes()
@@ -282,17 +293,16 @@ class AnnotationCollection(BaseModel):
                 "replace_annotation_labels: You should give a non-empty old_name and new_name argumeents.",
             )
             return
-        if specific_type == None:
+        if specific_type is None:
             for annot in self.annotations:
                 if annot.label == old_name or all_labels is True:
-                    annot.label =new_name
+                    annot.label = new_name
         else:
             for annot in self.annotations:
-                if isinstance(annot, specific_type):
-                    if annot.label == old_name or all_labels is True:
-                        annot.label = new_name
+                if isinstance(annot, specific_type) and (annot.label == old_name or all_labels is True):
+                    annot.label = new_name
 
-    def remove_contained_annotations(self) -> None:
+    def remove_contained_annotations(self, of_same_label_only: bool = True) -> None:
         """
         Remove contained annotations, that is, annotations that are contained in another one, with the same tag
         Notes: multi-fragment entities are ignored
@@ -315,8 +325,14 @@ class AnnotationCollection(BaseModel):
         for i, current_ann in enumerate(sorted_entities):
             is_contained = False
             for _, other_ann in enumerate(sorted_entities, start=i + 1):
-                if (current_ann.label == other_ann.label and other_ann.fragments[0].start <= current_ann.fragments[0].start and other_ann.fragments[0].end > current_ann.fragments[0].end) or (
-                    current_ann.label == other_ann.label and other_ann.fragments[0].start < current_ann.fragments[0].start and other_ann.fragments[0].end >= current_ann.fragments[0].end
+                if (
+                    (current_ann.label == other_ann.label or of_same_label_only is False)
+                    and other_ann.fragments[0].start <= current_ann.fragments[0].start
+                    and other_ann.fragments[0].end > current_ann.fragments[0].end
+                ) or (
+                    (current_ann.label == other_ann.label or of_same_label_only is False)
+                    and other_ann.fragments[0].start < current_ann.fragments[0].start
+                    and other_ann.fragments[0].end >= current_ann.fragments[0].end
                 ):
                     is_contained = True
                     break
@@ -327,7 +343,7 @@ class AnnotationCollection(BaseModel):
         filtered_annotations.extend(entities_multifrag)
         filtered_annotations.extend(annot_others)
         # apply the change to the annotation collection
-        object.__setattr__(self, "annotations", filtered_annotations)
+        self.annotations = filtered_annotations
 
         # remove orphan annotations
         self.remove_orphan_notes()
@@ -350,11 +366,7 @@ class AnnotationCollection(BaseModel):
 
         for annot in self.annotations:
             if annot.id[0] in dico_count:
-                object.__setattr__(
-                    annot,
-                    "id",
-                    f"{annot.id[0]}{dico_count[annot.id[0]] + renum_start}",
-                )
+                annot.id = f"{annot.id[0]}{dico_count[annot.id[0]] + renum_start}"
                 dico_count[annot.id[0]] += 1
             elif annot.id[0] == "*":
                 pass  # no number associated with EquivalenceAnnotation objects
@@ -371,11 +383,7 @@ class AnnotationCollection(BaseModel):
         if with_renum:
             self.renum()
 
-    def keep_specific_annotations(
-        self,
-        labels: list[str],
-        annot_type=EntityAnnotation,
-    ) -> None:
+    def keep_specific_annotations(self, labels: list[str], annot_type=None) -> None:
         """
         Delete all annotations that are not EntityAnnotation (or another type) associated with one of the labels in the list
         this function is useful when you want to transform ann files which contains multiple labels (anatomie, substance, etc.)
@@ -384,21 +392,20 @@ class AnnotationCollection(BaseModel):
         res: list[Annotation] = []
         try:
             for ann in self.annotations:
-                if isinstance(ann, annot_type):
-                    if ann.label in labels:
-                        res.append(ann)
+                if (annot_type is None or isinstance(ann, annot_type)) and ann.label in labels:
+                    res.append(ann)  # noqa: PERF401
         except Exception as general_exception:
             print("Exception occurred:", str(general_exception))
             print(
                 "No modification have been done on the AnnotationCollection instance.",
             )
             return
-        object.__setattr__(self, "annotations", res)
+        self.annotations = res
 
     def remove_annotations_given_label(self, targeted_label) -> None:
         """Remove all annotations that have a specific label"""
         new_list: list[Annotation] = [ann for ann in self.annotations if ann.label != targeted_label]
-        object.__setattr__(self, "annotations", new_list)
+        self.annotations = new_list
 
     def stats_annotation_types(self, verbose: bool = False) -> dict[type, int]:
         """Counts types of annotation (Entities count, Relations count, etc)"""
@@ -411,7 +418,7 @@ class AnnotationCollection(BaseModel):
             NormalizationAnnotation,
             NoteAnnotation,
         ]
-        dico: dict[type, int] = dict()
+        dico: dict[type, int] = {}
         for t in types:
             dico[t] = len(self.get_annotations(descendant_type=t))
             if verbose:
@@ -425,7 +432,7 @@ class AnnotationCollection(BaseModel):
     ) -> dict[str, int]:
         """Gives labels statistics count, for a given AnnotationType"""
         annotations = self.get_annotations(descendant_type=descendant_type)
-        dico: dict[str, int] = dict()
+        dico: dict[str, int] = {}
         for ann in annotations:
             if ann.label not in dico:
                 dico[ann.label] = 1
@@ -443,7 +450,7 @@ class AnnotationCollection(BaseModel):
         verbose: bool = False,
     ) -> dict[str, int]:
         """Gives entity content statistics count, for a given label, or for all entities if label is not given"""
-        dico: dict[str, int] = dict()
+        dico: dict[str, int] = {}
         annotations = self.get_annotations(descendant_type=EntityAnnotation)
         if label != "":
             for ann in annotations:
@@ -472,10 +479,10 @@ class AnnotationCollection(BaseModel):
                     print(str(value), "annotations with content:", k)
         return dico
 
-    def to_json(self, path_json_file: str = "") -> dict[str, dict[str, List[Any]]]:
+    def to_json(self, path_json_file: str = "") -> dict[str, dict[str, list[Any]]]:
         """Save ann data as json file"""
         # create dict
-        dic_res: dict[str, dict[str, List[Any]]] = {}
+        dic_res: dict[str, dict[str, list[Any]]] = {}
 
         # get stats of entity_ann labels
         dico_label = self.stats_labels_given_annot_type(
@@ -483,10 +490,10 @@ class AnnotationCollection(BaseModel):
         )
 
         # adding unique texts
-        for label in dico_label.keys():
+        for label in dico_label:
             dico_text = self.stats_entity_contents_given_label(label=label)
             mytexts = dico_text.keys()
-            mylabeltexts: dict[str, List[Any]] = {txt: [] for txt in mytexts}
+            mylabeltexts: dict[str, list[Any]] = {txt: [] for txt in mytexts}
             dic_res[label] = mylabeltexts
 
         # add associated notes
@@ -501,22 +508,19 @@ class AnnotationCollection(BaseModel):
                             note.value,
                         )
                         list_txts = dic_res[label].keys()
-                        if text in list_txts:
-                            if note_value not in dic_res[label][text]:
-                                dic_res[label][text].append(note_value)
+                        if text in list_txts and note_value not in dic_res[label][text]:
+                            dic_res[label][text].append(note_value)
                 else:
                     for ann in self.annotations:
-                        if isinstance(ann, EntityAnnotation):
-                            if note.component == ann.id:
-                                label, text, note_value = (
-                                    ann.label,
-                                    ann.content,
-                                    note.value,
-                                )
-                                list_txts = dic_res[label].keys()
-                                if text in list_txts:
-                                    if note_value not in dic_res[label][text]:
-                                        dic_res[label][text].append(note_value)
+                        if isinstance(ann, EntityAnnotation) and note.component == ann.id:
+                            label, text, note_value = (
+                                ann.label,
+                                ann.content,
+                                note.value,
+                            )
+                            list_txts = dic_res[label].keys()
+                            if text in list_txts and note_value not in dic_res[label][text]:
+                                dic_res[label][text].append(note_value)
 
         # sort dict
         sorted_dict = dict(sorted(dic_res.items()))
@@ -532,54 +536,63 @@ class AnnotationCollection(BaseModel):
 class Document(BaseModel):
     """A document (usually a txt file), which can be linked to one or multiple AnnotationCollection"""
 
-    # metadata
-    # absolute path to the txt file
-    fullpath: str
-    # absolute path to the directory which contains the txt file
-    folderpath: str
-    filename_without_ext: str
-    extension: str
-    version: str
-    comment: str
-    # actual data
-    annotation_collections: list[AnnotationCollection]
-    text: str
+    # Class arguments
+    fullpath: str  # absolute path to the txt file
+    version: str = "0.0.1"
+    comment: str = "Empty comment"
+    annotation_collections: list[AnnotationCollection] = []
 
-    def __init__(
-        self,
-        fullpath: str,
-        version: str = "0.0.1",
-        comment: str = "Empty comment",
-        annotation_collections: Optional[list[AnnotationCollection]] = None,
-        text: Optional[str] = None,
-    ) -> None:
-        object.__setattr__(self, "version", version)
-        object.__setattr__(self, "comment", comment)
-        object.__setattr__(self, "fullpath", fullpath)
-        object.__setattr__(self, "folderpath", dirname(fullpath))
-        filename_without_ext, extension = splitext(basename(fullpath))
+    # Other arguments determined by the validators
+    text: str = ""  # text content
+    folderpath: str = ""  # absolute path to the directory which contains the txt file
+    filename_without_ext: str = ""
+    extension: str = ""
+
+    class Config:
+        validate_assignment = True
+
+    @field_validator("fullpath", "version", "comment")
+    def validate_doc_str_input(cls, v):
+        if type(v) is str and len(v) > 0:
+            return v
+        raise ParsingError(
+            "Badly initialized Document (fullpath, version and comment must be non-empty strings)\n",
+        )
+
+    @field_validator("annotation_collections")
+    def validate_annotation_collections(cls, v):
+        if isinstance(v, list):
+            if len(v) == 0:
+                return []
+            if all(isinstance(item, AnnotationCollection) for item in v):
+                return v
+        raise ParsingError(
+            "Badly initialized Document (annotation_collections must be a list of AnnotationCollection instances)\n",
+        )
+
+    @field_validator("text")
+    def validate_text(cls, v):
+        if isinstance(v, str) and len(v) > 0:
+            return v
+        raise ParsingError(
+            "Badly initialized Document (text must be a non-empty string)\n",
+        )
+
+    @model_validator(mode="after")
+    def prepare_other_metadata(self):
+        # we use object.__setattr_ to bypass the validation process after assignment using self
+        # which avoids unlimited recursion
+        object.__setattr__(self, "folderpath", dirname(self.fullpath))
+        filename_without_ext, extension = splitext(basename(self.fullpath))
         object.__setattr__(self, "filename_without_ext", filename_without_ext)
         object.__setattr__(self, "extension", extension)
-        if annotation_collections is None:
-            object.__setattr__(self, "annotation_collections", [])
-        else:
-            object.__setattr__(self, "annotation_collections", annotation_collections)
-        if text is None:
-            object.__setattr__(self, "text", None)
-        else:
-            object.__setattr__(self, "text", text)
+        return self
 
     def add_annotation_collection(
         self,
         ann_collect: AnnotationCollection,
-        version: str = "",
-        comment: str = "",
     ) -> None:
         """Add an Annotation Collection, with optional metadata options"""
-        if version:
-            object.__setattr__(ann_collect, "version", version)
-        if comment:
-            object.__setattr__(ann_collect, "comment", comment)
         self.annotation_collections.append(ann_collect)
 
     def __str__(self) -> str:
@@ -613,7 +626,7 @@ class Document(BaseModel):
         untranslated_crlf=False,
     ) -> Union[str, list[str]]:
         """Open txt file present in fullpath argument and return its content"""
-        fread = open(self.fullpath, encoding=encoding) if not untranslated_crlf else open(self.fullpath, encoding=encoding, newline="")
+        fread = open(self.fullpath, encoding=encoding) if not untranslated_crlf else open(self.fullpath, encoding=encoding, newline="")  # noqa: SIM115
         content: Union[str, list[str]] = fread.readlines() if split_lines else fread.read()
         fread.close()
         return content
@@ -674,7 +687,7 @@ class Document(BaseModel):
             )
         else:
             my_ann_col = self.annotation_collections[anncol_indice]
-            fixed_ann_col = AnnotationCollection([])
+            fixed_ann_col = AnnotationCollection(annotations=[])
             content_crlf = self.get_txt_content(untranslated_crlf=True)
             assert isinstance(content_crlf, str)
             for annot in my_ann_col.get_annotations():
@@ -688,7 +701,7 @@ class Document(BaseModel):
                             frag.start,
                         )
                         fixed_end = frag.end - content_crlf.count("\r", 0, frag.end)
-                        new_fragments.append(Fragment(fixed_start, fixed_end))
+                        new_fragments.append(Fragment(start=fixed_start, end=fixed_end))
                     annot.fragments = new_fragments
                 fixed_ann_col.add_annotation(annot)
             # fixed
@@ -696,7 +709,7 @@ class Document(BaseModel):
 
     def stats_annotation_types(self, verbose: bool = False) -> dict[type, int]:
         """Counts types of annotation (Entities count, Relations count, etc) in the list of annotation collections"""
-        dico: dict[type, int] = dict()
+        dico: dict[type, int] = {}
 
         dico_anns: list[dict[type, int]] = [ac.stats_annotation_types(verbose=False) for ac in self.annotation_collections]
 
@@ -718,7 +731,7 @@ class Document(BaseModel):
         verbose: bool = False,
     ) -> dict[str, int]:
         """Gives labels statistics count, for a given AnnotationType in the list of annotation collections"""
-        dico: dict[str, int] = dict()
+        dico: dict[str, int] = {}
 
         dico_anns: list[dict[str, int]] = [
             ac.stats_labels_given_annot_type(
@@ -747,7 +760,7 @@ class Document(BaseModel):
         verbose: bool = False,
     ) -> dict[str, int]:
         """Gives entity content statistics count, for a given label, or for all entities if label is not given, in the list of annotation collection"""
-        dico: dict[str, int] = dict()
+        dico: dict[str, int] = {}
 
         dico_anns: list[dict[str, int]] = [ac.stats_entity_contents_given_label(verbose=False, label=label) for ac in self.annotation_collections]
 
@@ -781,26 +794,33 @@ class DocumentCollection(BaseModel):
     """A set of documents (usually a set of txt file stored in a folder)"""
 
     # metadata
-    folderpath: str
-    version: str
-    comment: str
+    folderpath: str = ""
+    version: str = "0.0.1"
+    comment: str = "Empty comment"
     # actual data
-    documents: list[Document]
+    documents: list[Document] = []
 
-    def __init__(
-        self,
-        folderpath: str,
-        version: str = "0.0.1",
-        comment: str = "Empty comment",
-        documents: Optional[list[Document]] = None,
-    ) -> None:
-        object.__setattr__(self, "version", version)
-        object.__setattr__(self, "comment", comment)
-        object.__setattr__(self, "folderpath", folderpath)
-        if documents is None:
-            object.__setattr__(self, "documents", [])
-        else:
-            object.__setattr__(self, "documents", documents)
+    class Config:
+        validate_assignment = True
+
+    @field_validator("folderpath", "version", "comment")
+    def validate_doccol_str_input(cls, v):
+        if type(v) is str and len(v) > 0:
+            return v
+        raise ParsingError(
+            "Badly initialized DocumentCollection (folderpath, version and comment must be non-empty strings)\n",
+        )
+
+    @field_validator("documents")
+    def validate_doccol_docs_input(cls, v):
+        if isinstance(v, list):
+            if len(v) == 0:
+                return []
+            if all(isinstance(doc, Document) for doc in v):
+                return v
+        raise ParsingError(
+            "Badly initialized DocumentCollection (documents must be a list of Document instances)\n",
+        )
 
     def __len__(self):
         return len(self.documents)
@@ -835,10 +855,7 @@ class DocumentCollection(BaseModel):
 
     def check_ann_compatibility_with_txt(self) -> bool:
         """Check whether the ann files is compatible with the txt files, for each Document"""
-        for d in self.documents:
-            if d.check_ann_compatibility_with_txt() is False:
-                return False
-        return True
+        return all(d.check_ann_compatibility_with_txt() is not False for d in self.documents)
 
     def fix_ann_encoded_with_crlf(self) -> None:
         """Function which consists in fixing the ann indices in case it has been written while taking the CRLF as two characters, for each document"""
@@ -847,7 +864,7 @@ class DocumentCollection(BaseModel):
 
     def stats_annotation_types(self, verbose: bool = False) -> dict[type, int]:
         """Counts types of annotation (Entities count, Relations count, etc) in the list of documents"""
-        dico: dict[type, int] = dict()
+        dico: dict[type, int] = {}
 
         dico_docs: list[dict[type, int]] = [doc.stats_annotation_types(verbose=False) for doc in self.documents]
 
@@ -869,7 +886,7 @@ class DocumentCollection(BaseModel):
         verbose: bool = False,
     ) -> dict[str, int]:
         """Gives labels statistics count, for a given AnnotationType in the list of documents"""
-        dico: dict[str, int] = dict()
+        dico: dict[str, int] = {}
 
         dico_docs: list[dict[str, int]] = [
             doc.stats_labels_given_annot_type(
@@ -898,7 +915,7 @@ class DocumentCollection(BaseModel):
         verbose: bool = False,
     ) -> dict[str, int]:
         """Gives entity content statistics count, for a given label, or for all entities if label is not given, in the list of documents"""
-        dico: dict[str, int] = dict()
+        dico: dict[str, int] = {}
 
         dico_docs: list[dict[str, int]] = [doc.stats_entity_contents_given_label(verbose=False, label=label) for doc in self.documents]
 

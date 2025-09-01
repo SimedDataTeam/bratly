@@ -13,13 +13,13 @@ def main():
         "########################################## ENTITY ANNOTATION ###########################################################",
     )
     # create two entity annotations (with the ID being a str written with or without the EntityAnnotation mark T)
-    ann1 = EntityAnnotation("T1", "LabelX", [Fragment(1, 3)], "xx")
-    ann2 = EntityAnnotation("2", "LabelY", [Fragment(3, 5)], "yy")
+    ann1 = EntityAnnotation(id="T1", label="LabelX", fragments=[Fragment(start=1, end=3)], content="xx")
+    ann2 = EntityAnnotation(id="2", label="LabelY", fragments=[Fragment(start=3, end=5)], content="yy")
     ann_note1 = NoteAnnotation(
-        "#1",
-        "AnnotatorNotes",
-        "This is a note we give, un certain T2 parlant de yy",
-        ann2,
+        id="#1",
+        label="AnnotatorNotes",
+        component=ann2,
+        value="This is a note we give, un certain T2 parlant de yy",
     )
     print("- Annotation 1:", ann1)
     print("- Annotation 2:", ann2)
@@ -31,7 +31,7 @@ def main():
         "\n\n########################################## ANNOTATION COLLECTION: CREATION AND ADDING ANNOTATIONS ###########################################################",
     )
     # create an empty annotation collection
-    anns = AnnotationCollection([])
+    anns = AnnotationCollection(annotations=[])
     anns.add_annotation(ann2)
     print(
         "- Added Annotation 2 in collection through add_annotation method, the collection:",
@@ -56,7 +56,7 @@ def main():
     print(
         "\n\n########################################## ANNOTATION COLLECTION: REMOVING DUPLICATES AND SORTING ANNOTATIONS ###########################################################",
     )
-    ann2_diffid = EntityAnnotation("T3", "LabelY", [Fragment(3, 5)], "yy")
+    ann2_diffid = EntityAnnotation(id="T3", label="LabelY", fragments=[Fragment(start=3, end=5)], content="yy")
     anns.add_annotation(ann2_diffid)
     print("Current annotations:")
     print(anns)
@@ -73,15 +73,15 @@ def main():
     print(
         "\n\n########################################## ANNOTATION COLLECTION: COMBINING ANNOTATIONS ###########################################################",
     )
-    ann3 = EntityAnnotation("T1", "LabelX", [Fragment(1, 3)], "xx")
-    ann4 = EntityAnnotation("2", "LabelY", [Fragment(8, 14)], "chemin")
+    ann3 = EntityAnnotation(id="T1", label="LabelX", fragments=[Fragment(start=1, end=3)], content="xx")
+    ann4 = EntityAnnotation(id="2", label="LabelY", fragments=[Fragment(start=8, end=14)], content="chemin")
     ann_note2 = NoteAnnotation(
-        "#1",
-        "AnnotatorNotes",
-        "This is a note we give, un certain T2 parlant de chemin",
-        ann4,
+        id="#1",
+        label="AnnotatorNotes",
+        value="This is a note we give, un certain T2 parlant de chemin",
+        component=ann4,
     )
-    anns2 = AnnotationCollection([ann3, ann4, ann_note2])
+    anns2 = AnnotationCollection(annotations=[ann3, ann4, ann_note2])
     anns.add_annotation(ann_note1)
     print("- Trying the function combining these two AnnotationCollection:")
     print(anns.get_annotations())
@@ -94,23 +94,23 @@ def main():
         "\n\n########################################## ANNOTATION COLLECTION: STATISTICS FUNCTIONS ###########################################################",
     )
     print("- Added two more annotations:")
-    ann3 = EntityAnnotation("3", "LabelY", [Fragment(7, 9)], "yy")
-    ann4 = EntityAnnotation("4", "LabelY", [Fragment(11, 12)], "y")
+    ann3 = EntityAnnotation(id="3", label="LabelY", fragments=[Fragment(start=7, end=9)], content="yy")
+    ann4 = EntityAnnotation(id="4", label="LabelY", fragments=[Fragment(start=11, end=12)], content="y")
     anns.extend_annotation([ann3, ann4])
     print("-- Annotation 3:", ann3)
     print("-- Annotation 4:", ann4)
     print(anns.get_annotations())
     print("- Giving statistics about the collection:")
-    mon_dico = anns.stats_annotation_types(verbose=True)
+    anns.stats_annotation_types(verbose=True)
     print("- Giving statistics about the labels among entities:")
-    mon_dico = anns.stats_labels_given_annot_type(
+    anns.stats_labels_given_annot_type(
         verbose=True,
         descendant_type=EntityAnnotation,
     )
     print(
         "- Giving statistics about the contents from the label LabelY among entities:",
     )
-    mon_dico = anns.stats_entity_contents_given_label(
+    anns.stats_entity_contents_given_label(
         label="LabelY",
         verbose=True,
     )
@@ -121,7 +121,7 @@ def main():
     print(
         "- Suppose that we have another annotation, Annotation5, which is contained in another annotation, let's say Annotation 3:",
     )
-    ann5 = EntityAnnotation("5", "LabelY", [Fragment(7, 8)], "y")
+    ann5 = EntityAnnotation(id="5", label="LabelY", fragments=[Fragment(start=7, end=8)], content="y")
     anns.add_annotation(ann5)
     print("-- Annotation 5:", ann5)
     print("-- Annotation 3:", ann3)
@@ -139,7 +139,7 @@ def main():
     print(
         "\n\n########################################## ANNOTATION COLLECTION: GETTERS ###########################################################",
     )
-    ann3 = NoteAnnotation("#1", "AnnotatorNotes", "This is a note we give", ann2)
+    ann3 = NoteAnnotation(id="#1", label="AnnotatorNotes", value="This is a note we give", component=ann2)
     anns.remove_duplicates()
     anns.add_annotation(ann3)
     print("- We remove duplicates, and then add a NoteAnnotation. The collection:")
