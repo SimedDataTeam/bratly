@@ -1,0 +1,12 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/workspaces/project/.venv/lib/python3.12/site-packages",
+        "./src_libs/*/src",
+        "./src_devs/*/src",
+    ],
+    "python.analysis.extraPaths": [
+        "/workspaces/project/.venv/lib/python3.12/site-packages",
+        "./src_libs/*/src",
+        "./src_devs/*/src",
+    ],
+}

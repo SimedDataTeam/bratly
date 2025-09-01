@@ -4,7 +4,7 @@ alias smd_clean_all="git clean -dfX --exclude='!*keepme*' --exclude='!.env' && f
 # Init a workspace
 smd_init_all() {
   if [ -z "$1" ]; then
-    echo "Usage: smd_git_init <app-name> <remote-url>"
+    echo "Usage: smd_init_all <app-name> <remote-url>"
     echo "DO NOT CREATE A README ON THE NEW REPOSITORY ON GITLAB"
     return 1
   fi

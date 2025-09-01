@@ -4,18 +4,35 @@ extend-include = ["*.ipynb"]
 line-length = 192
 lint.select = ["ALL"]
 lint.ignore = [
+    "EM",     # missing type hints
     "ERA001", # commented-out-code.
     "FA",     # ignore import future declaration
     "F401",   # unused-import
+    "ANN001", # missing type hints
     "ANN201", # return types enforcing
     "ANN202", # return types enforcing for private functions
     "ANN204", # missing return type special-method
+    "ANN205", # missing return type for non-async generator
+    "ANN206", # missing return type for async generator
     "ANN101", # this types enforcing
+    "B008",   # no-else-return
+    "BLE001", # no-blank-line-before-class
+    "C901",   # function is too complex
     "T201",   # allow prints
     "D203",   # ignore no-blank-line-before-class
+    "FBT",    # function is too complex
     "FIX002", # line-contains-todo
+    "N805",
+    "N815",
+    "PGH003",
+    "PLR",
+    "PTH",
+    "RET504",
+    "S",
+    "TC002",
     "TD002",  # missing-todo-author
     "TD003",  # missing-todo-link
+    "TRY",    # allow try/except
     "D100",   # ignore missing docs
     "D101",   # ^
     "D102",   # ^
