@@ -208,7 +208,7 @@ class RelationAnnotation(Annotation):
             v = "R" + v
         else:
             raise ParsingError(
-                "Badly initialized EntityAnnotation (the id should start with R, or it must exclusively contains digits)\n",
+                "Badly initialized RelationAnnotation (the id should start with R, or it must exclusively contains digits)\n",
             )
         return v
 

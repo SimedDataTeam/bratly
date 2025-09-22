@@ -8,7 +8,7 @@ from .eval_src import (
     count_entities_of_many_folders,
     create_union_gold_candidate_sets,
 )
-from .eval_src.count_tokens import count_tokens_and_anns, stat_ann_categories
+from .eval_src.count_tokens import stat_ann_categories
 
 __all__ = [
     "Agreement",
@@ -21,7 +21,6 @@ __all__ = [
     "compare_pairs_of_folders",
     "count_entities_of_folder",
     "count_entities_of_many_folders",
-    "count_tokens_and_anns",
     "create_union_gold_candidate_sets",
     "stat_ann_categories",
 ]

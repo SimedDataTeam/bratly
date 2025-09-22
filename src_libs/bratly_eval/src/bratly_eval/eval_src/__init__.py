@@ -1,6 +1,6 @@
 import os
 from itertools import compress
-from typing import Optional, cast
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -35,8 +35,8 @@ def compare_annotations(
         annotations of the same sepearated by only whitespace in the original file might be joined.
     * Brat: Uses the definitions of the Brat standard (no related class, partial only if end matches)
     """
-    annotation_entities: list[EntityAnnotation] = cast(list[EntityAnnotation], annotation_file.get_annotations(descendant_type=EntityAnnotation))
-    gold_standard_entities: list[EntityAnnotation] = cast(list[EntityAnnotation], gold_standard_file.get_annotations(descendant_type=EntityAnnotation))
+    annotation_entities: list[EntityAnnotation] = cast("list[EntityAnnotation]", annotation_file.get_annotations(descendant_type=EntityAnnotation))
+    gold_standard_entities: list[EntityAnnotation] = cast("list[EntityAnnotation]", gold_standard_file.get_annotations(descendant_type=EntityAnnotation))
 
     if comparison_style not in ["Naive", "Clean", "Largest", "Brat"]:
         raise NotImplementedError
@@ -190,9 +190,9 @@ def compare_annotations(
 def write_results(
     eval_folder: str = "",
     eval_file: str = "",
-    df_agreement: Optional[pd.DataFrame] = None,
+    df_agreement: pd.DataFrame | None = None,
     csvc: str = "",
-    muc_coll: Optional[MucCollection] = None,
+    muc_coll: MucCollection | None = None,
     comparison_type=MucTable.RELAXED_COMPARISON,
     muc_with_help: bool = False,
 ):
@@ -265,7 +265,7 @@ def compare_folders(
     eval_folder: str = "",
     eval_file: str = "",
     muc_with_help: bool = False,
-    keep_specific_annotations: Optional[list[str]] = None,
+    keep_specific_annotations: list[str] | None = None,
     comparison_type=MucTable.RELAXED_COMPARISON,
     verbose: bool = False,
 ) -> tuple[MucCollection, str, pd.DataFrame]:
@@ -324,7 +324,7 @@ def compare_pairs_of_folders(
     eval_folder: str = "",
     eval_file: str = "",
     muc_with_help: bool = False,
-    keep_specific_annotations: Optional[list[str]] = None,
+    keep_specific_annotations: list[str] | None = None,
     comparison_type=MucTable.RELAXED_COMPARISON,
     verbose: bool = False,
 ) -> tuple[MucCollection, str, pd.DataFrame] | None:
@@ -516,8 +516,8 @@ def create_union_gold_candidate_sets(
         return
 
     # read doc cols
-    colgs: DocumentCollection = cast(DocumentCollection, read_document_collection_from_folder(path_doc_col_gs))
-    colcs: DocumentCollection = cast(DocumentCollection, read_document_collection_from_folder(path_doc_col_auto))
+    colgs: DocumentCollection = cast("DocumentCollection", read_document_collection_from_folder(path_doc_col_gs))
+    colcs: DocumentCollection = cast("DocumentCollection", read_document_collection_from_folder(path_doc_col_auto))
 
     col_new: DocumentCollection = DocumentCollection(folderpath=path_output_newgold_folder)
 
@@ -532,8 +532,8 @@ def create_union_gold_candidate_sets(
                 doccs.annotation_collections[0],
             )
             # get annotations
-            entitesauto: list[EntityAnnotation] = cast(list[EntityAnnotation], annotcol_cs.get_annotations(descendant_type=EntityAnnotation))
-            entitesgs: list[EntityAnnotation] = cast(list[EntityAnnotation], annotcol_gs.get_annotations(descendant_type=EntityAnnotation))
+            entitesauto: list[EntityAnnotation] = cast("list[EntityAnnotation]", annotcol_cs.get_annotations(descendant_type=EntityAnnotation))
+            entitesgs: list[EntityAnnotation] = cast("list[EntityAnnotation]", annotcol_gs.get_annotations(descendant_type=EntityAnnotation))
 
             # find the CORRECT annotations, add _both suffix
             for elt1 in entitesauto:
