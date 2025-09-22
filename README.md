@@ -1,4 +1,6 @@
-# bratly
+<p align="center">
+  <img src="https://raw.githubusercontent.com/SimedDataTeam/bratly/refs/heads/main/logo/bratly_transparent.png" alt="Bratly Logo" width="500">
+</p>
 
 **bratly** is a simple Python library to create, manipulate, compare (collections of) annotated documents in [Brat standoff format](https://brat.nlplab.org/standoff.html)
 
