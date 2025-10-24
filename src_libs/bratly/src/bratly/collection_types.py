@@ -72,6 +72,18 @@ class AnnotationCollection(BaseModel):
         result = [instance for instance in self.annotations if isinstance(instance, descendant_type)]
         return result
 
+    def set_annotations(self, anns: list[Annotation]) -> None:
+        if anns is None:
+            raise TypeError(
+                "A list[Annotation] instance is expected as an argument of the method set_annotations.",
+            )
+        if len(anns) == 0:
+            self.annotations = []
+            return
+        if not isinstance(anns, list) and not all(isinstance(ann, Annotation) for ann in anns):
+            raise TypeError("The expected argument is a list[Annotation] instance.")
+        self.annotations = anns
+
     def add_annotation(self, ann: Annotation) -> None:
         if ann is None:
             raise TypeError(
