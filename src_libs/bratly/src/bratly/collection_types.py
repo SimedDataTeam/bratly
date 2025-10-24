@@ -5,7 +5,7 @@ from typing import Any, Optional, Union
 
 from pydantic import BaseModel, field_validator, model_validator
 
-from .annotation_types import (
+from bratly.annotation_types import (
     Annotation,
     AttributeAnnotation,
     EntityAnnotation,
@@ -16,7 +16,7 @@ from .annotation_types import (
     NoteAnnotation,
     RelationAnnotation,
 )
-from .exceptions import ParsingError
+from bratly.exceptions import ParsingError
 
 
 class AnnotationCollection(BaseModel):

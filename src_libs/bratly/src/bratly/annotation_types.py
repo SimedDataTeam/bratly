@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 from pydantic import BaseModel, field_validator
 
-from .exceptions import ParsingError
+from bratly.exceptions import ParsingError
 
 
 class Fragment(BaseModel):
