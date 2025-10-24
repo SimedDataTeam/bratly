@@ -6,8 +6,11 @@ requires-python = ">=3.10"
 dependencies = ["bratly"]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.8.15,<0.9"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "bratly.io"
 
 [tool.uv.sources]
 bratly = { workspace = true }

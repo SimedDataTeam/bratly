@@ -1,7 +1,7 @@
 import json
 from operator import itemgetter
 from os.path import basename, dirname, splitext
-from typing import Any, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -53,15 +53,7 @@ class AnnotationCollection(BaseModel):
     def get_annotations(
         self,
         descendant_type=None,
-    ) -> Union[
-        list[Annotation],
-        list[EntityAnnotation],
-        list[RelationAnnotation],
-        list[EventAnnotation],
-        list[EquivalenceAnnotation],
-        list[NormalizationAnnotation],
-        list[NoteAnnotation],
-    ]:
+    ) -> list[Annotation] | list[EntityAnnotation] | list[RelationAnnotation] | list[EventAnnotation] | list[EquivalenceAnnotation] | list[NormalizationAnnotation] | list[NoteAnnotation]:
         """
         Getter method for annotations, two use cases:
         1- Gives all annotations by default
@@ -296,7 +288,7 @@ class AnnotationCollection(BaseModel):
         self,
         old_name: str,
         new_name: str,
-        specific_type: Optional[type] = None,
+        specific_type: type | None = None,
         all_labels: bool = False,
     ) -> None:
         """Replace annotations label by another one"""
@@ -405,12 +397,12 @@ class AnnotationCollection(BaseModel):
         try:
             for ann in self.annotations:
                 if (annot_type is None or isinstance(ann, annot_type)) and ann.label in labels:
-                    res.append(ann)  # noqa: PERF401
+                    res.append(ann)
             # also keep attributes which are linked to the kept annotations
             for ann in self.annotations:
                 if isinstance(ann, AttributeAnnotation) or isinstance(ann, NoteAnnotation):
                     if ann.component in res:
-                        res.append(ann)  # noqa: PERF401
+                        res.append(ann)
         except Exception as general_exception:
             print("Exception occurred:", str(general_exception))
             print(
@@ -641,10 +633,10 @@ class Document(BaseModel):
         encoding="UTF-8",
         split_lines=False,
         untranslated_crlf=False,
-    ) -> Union[str, list[str]]:
+    ) -> str | list[str]:
         """Open txt file present in fullpath argument and return its content"""
         fread = open(self.fullpath, encoding=encoding) if not untranslated_crlf else open(self.fullpath, encoding=encoding, newline="")  # noqa: SIM115
-        content: Union[str, list[str]] = fread.readlines() if split_lines else fread.read()
+        content: str | list[str] = fread.readlines() if split_lines else fread.read()
         fread.close()
         return content
 

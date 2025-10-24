@@ -2,7 +2,7 @@ from os import makedirs
 from os.path import join
 
 from bratly import AnnotationCollection, Document, DocumentCollection, EntityAnnotation
-from bratly_io_fs import read_and_load_ann_file, read_and_load_txt_file, read_document_collection_from_folder, write_ann_file, write_ann_files_in_folder
+from bratly.io import read_and_load_ann_file, read_and_load_txt_file, read_document_collection_from_folder, write_ann_file, write_ann_files_in_folder
 
 
 def main():

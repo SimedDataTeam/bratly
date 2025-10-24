@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from bratly_eval.eval_src import compare_folders
-from bratly_eval.eval_src.count_tokens import count_tokens_and_anns
+from bratly.eval.eval_src import compare_folders
+from bratly.eval.eval_src.count_tokens import count_tokens_and_anns
 
 
 def contains_any(main_string, substrings):

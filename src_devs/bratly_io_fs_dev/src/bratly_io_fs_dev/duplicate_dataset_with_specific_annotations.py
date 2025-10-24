@@ -4,7 +4,7 @@ from bratly import (
     DocumentCollection,
     EntityAnnotation,
 )
-from bratly_io_fs import read_document_collection_from_folder, write_ann_files_in_folder
+from bratly.io import read_document_collection_from_folder, write_ann_files_in_folder
 
 
 def duplicate_document_collection_with_specific_annotations(
@@ -15,7 +15,7 @@ def duplicate_document_collection_with_specific_annotations(
 ) -> DocumentCollection:
     """Copy an existing document collection, while keeping only a specific subset of annotations given their labels"""
     # read the doccollection
-    doccol: Optional[DocumentCollection] = read_document_collection_from_folder(
+    doccol: DocumentCollection | None = read_document_collection_from_folder(
         path=doccol_input_path,
         no_duplicates_ann=False,
         sort_ann=False,

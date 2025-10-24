@@ -1,5 +1,4 @@
 import re
-from typing import Optional, Union
 
 from pydantic import BaseModel, field_validator
 
@@ -410,7 +409,7 @@ class AttributeAnnotation(Annotation):
     """A type of Annotation, an attribute linked to an EntityAnnotation"""
 
     component: Annotation
-    values: Optional[list[str]] = None
+    values: list[str] | None = None
 
     @field_validator("id")
     def validate_id(cls, v: str) -> str:
@@ -435,7 +434,7 @@ class AttributeAnnotation(Annotation):
         return v
 
     @field_validator("values")
-    def validate_values(cls, v: Optional[list[str]]) -> Optional[list[str]]:
+    def validate_values(cls, v: list[str] | None) -> list[str] | None:
         if v is None:
             return []
         if not all(isinstance(item, str) for item in v):
@@ -570,7 +569,7 @@ class NormalizationAnnotation(Annotation):
 
 
 class NoteAnnotation(Annotation):
-    component: Optional[Union[Annotation, str]]
+    component: Annotation | str | None
     value: str
 
     @field_validator("id")
@@ -588,7 +587,7 @@ class NoteAnnotation(Annotation):
         return v
 
     @field_validator("component")
-    def validate_component(cls, v: Union[Annotation, str]) -> Union[Annotation, str]:
+    def validate_component(cls, v: Annotation | str) -> Annotation | str:
         if not isinstance(v, (Annotation, str)):
             raise ParsingError(
                 "Badly initialized NoteAnnotation (the component must be an Annotation instance or a string)\n",
@@ -619,7 +618,7 @@ class NoteAnnotation(Annotation):
         if type(self.component) is str:
             return f"{self.id}\t{self.label} {self.component}\t{self.value}"
         assert isinstance(self.component, Annotation)
-        return f"{self.id}\t{self.label} {self.component.id}\t{self.value}"
+        return f"{self.id}\t{self.label} {self.component.id}\t{self.value}" # type: ignore
 
     def __repr__(self) -> str:
         return str(self)

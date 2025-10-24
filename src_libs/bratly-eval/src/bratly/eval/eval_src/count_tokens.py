@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 from bratly import DocumentCollection, EntityAnnotation
-from bratly_io_fs import read_document_collection_from_folder
+from bratly.io import read_document_collection_from_folder
 from tqdm import tqdm
 
 """ DEPRECATED , USE stat_ann_categories below"""

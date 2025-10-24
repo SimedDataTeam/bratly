@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 
 from bratly.collection_types import DocumentCollection
-from bratly_io_fs import read_document_collection_from_folder, write_ann_files_in_folder
+from bratly.io import read_document_collection_from_folder, write_ann_files_in_folder
 
 
 def main(path_datasets: str = "./data/bratly_datasets/"):

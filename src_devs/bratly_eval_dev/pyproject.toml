@@ -3,19 +3,14 @@ name = "bratly-eval-dev"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.12"
-dependencies = [
-    "bratly",
-    "bratly-eval",
-    "bratly-io-fs",
-    "ipykernel>=6.29.5",
-]
+dependencies = ["bratly", "bratly-eval", "bratly-io-fs", "ipykernel>=6.29.5"]
 
 [project.scripts]
 bratly-eval-dev = "bratly_eval_dev:main"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.8.15,<0.9"]
+build-backend = "uv_build"
 
 [tool.uv.sources]
 bratly-eval = { workspace = true }

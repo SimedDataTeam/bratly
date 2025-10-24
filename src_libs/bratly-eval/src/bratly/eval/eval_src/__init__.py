@@ -5,15 +5,14 @@ from typing import cast
 import numpy as np
 import pandas as pd
 from bratly import AnnotationCollection, Document, DocumentCollection, EntityAnnotation
-from bratly_io_fs import (
+from bratly.eval.agreement_types import Agreement, FragmentAgreement, MucCollection, MucTable
+from bratly.io import (
     copy_txt_from_collection_to_another_path,
     parse_ann_file,
     read_ann_files_from_folder,
     read_document_collection_from_folder,
     write_ann_files_in_folder,
 )
-
-from bratly_eval.agreement_types import Agreement, FragmentAgreement, MucCollection, MucTable
 
 
 def compare_annotations(

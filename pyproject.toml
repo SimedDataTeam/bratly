@@ -6,7 +6,7 @@ requires-python = ">=3.10"
 dependencies = []
 
 [tool.uv.workspace]
-members = ["src_*/*"]
+members = ["src_libs/*", "src_devs/*"]
 
 [tool.uv.sources]
 bratly = { workspace = true }

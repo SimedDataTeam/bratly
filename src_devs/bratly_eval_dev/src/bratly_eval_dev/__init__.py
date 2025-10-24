@@ -1,6 +1,6 @@
 import os
 
-from bratly_eval import compare_folders
+from bratly.eval import compare_folders
 
 
 def main() -> None:

@@ -30,9 +30,9 @@ Bratly with evaluation tools (includes bratly_io_fs and bratly_eval):
 - new instancied concepts: Document (txt + ann + metadata), DocumentCollection, AnnotationCollection, Fragment, with full-stack of utilities and tools
 
 - It is composed of three packages:
-  1. bratly ([docs](src_libs/bratly/src/bratly/README.md)): the core part with classes, defines classes of collections and annotations
-  2. bratly_io_fs ([docs](src_libs/bratly_io_fs/src/bratly_io_fs/README.md)): read/write collections from/to files
-  3. bratly_eval ([docs](src_libs/bratly_eval/src/bratly_eval/README.md)): compare/evaluate two sets of annotations (produce quantitative and qualitative evaluation)
+  1. bratly ([docs](src_libs/bratly/README.md)): the core part with classes, defines classes of collections and annotations
+  2. bratly_io_fs ([docs](src_libs/bratly-io-fs/README.md)): read/write collections from/to files
+  3. bratly_eval ([docs](src_libs/bratly-eval/README.md)): compare/evaluate two sets of annotations (produce quantitative and qualitative evaluation)
 
 ## bratly classes
 
