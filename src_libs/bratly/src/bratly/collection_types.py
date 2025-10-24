@@ -394,6 +394,11 @@ class AnnotationCollection(BaseModel):
             for ann in self.annotations:
                 if (annot_type is None or isinstance(ann, annot_type)) and ann.label in labels:
                     res.append(ann)  # noqa: PERF401
+            # also keep attributes which are linked to the kept annotations
+            for ann in self.annotations:
+                if isinstance(ann, AttributeAnnotation):
+                    if ann.component in res:
+                        res.append(ann)  # noqa: PERF401
         except Exception as general_exception:
             print("Exception occurred:", str(general_exception))
             print(
